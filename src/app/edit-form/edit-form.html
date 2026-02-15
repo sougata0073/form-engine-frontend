@@ -1,0 +1,10 @@
+<div class="parent-container">
+  @if (isFormLoaded()) {
+    <app-edit-form-header class="header"/>
+    <div class="main-content-container">
+      <div class="main-content">
+        <router-outlet/>
+      </div>
+    </div>
+  }
+</div>

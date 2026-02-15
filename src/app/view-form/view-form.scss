@@ -1,0 +1,121 @@
+@use "index" as *;
+@use "@angular/material" as mat;
+
+.parent-container {
+  height: 100%;
+  padding: $space-md 0 $space-md 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+
+  .main-content {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+
+    .question-list {
+      li {
+        list-style: none;
+        margin: $space-md 0 $space-md 0;
+      }
+    }
+
+    .buttons-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .submit-button {
+        @include mat.button-overrides((
+          filled-container-shape: $space-xs,
+        ))
+      }
+
+      .clear-button {
+        @include mat.button-overrides((
+          text-container-shape: $space-xs
+        ))
+      }
+    }
+  }
+
+  .not-accepting-response-message-container {
+    width: 50%;
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+
+    .not-accepting-response-content-container {
+      display: flex;
+      flex-direction: column;
+      padding: $space-md $space-xs $space-xs $space-xs;
+      gap: $space-md;
+
+      .form-title {
+        font-size: $space-xl;
+        line-height: normal;
+      }
+    }
+
+    .footer-container {
+      align-self: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 $space-sm 0 $space-sm;
+      gap: $space-sm;
+
+      * {
+        text-align: center;
+      }
+
+      .app-title {
+        font-size: $space-lg;
+        line-height: normal;
+        margin-top: $space-xxs;
+      }
+
+      a {
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .not-published-container {
+    width: 50%;
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+    padding-top: $space-md;
+
+    .app-title-container {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      gap: $space-xs;
+
+      .app-title {
+        font-size: $space-xl;
+        line-height: normal;
+      }
+    }
+
+    .message {
+      font-size: $space-md * 1.1;
+      line-height: normal;
+      font-weight: bold;
+    }
+  }
+
+  .loader-container {
+    height: 100%;
+    place-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}

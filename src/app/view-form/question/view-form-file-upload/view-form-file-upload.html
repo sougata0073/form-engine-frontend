@@ -1,0 +1,18 @@
+<div class="parent-container">
+  <button matButton="outlined" class="add-file-button" (click)="fileInput.click()">
+    <mat-icon fontIcon="attach_file"/>
+    Add file
+  </button>
+  <form hidden [formGroup]="formGroup">
+    <input
+      #fileInput
+      type="file"
+      formControlName="file"
+      [accept]="allowedFileMimes()"
+      (change)="onFileChange(fileInput.files)"/>
+  </form>
+  @let fileInputError = formControlError(formGroup.controls.file, []);
+  @if (fileInputError) {
+    <mat-error>{{ fileInputError }}</mat-error>
+  }
+</div>

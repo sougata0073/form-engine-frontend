@@ -1,0 +1,28 @@
+@use 'index' as *;
+@use "@angular/material" as mat;
+
+.parent-container {
+  display: flex;
+  flex-direction: column;
+  padding: $space-md 0 $space-md 0;
+}
+
+.parent-container.with-loader-only {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+li {
+  margin: $space-md 0 $space-md 0;
+  list-style: none;
+}
+
+.component-add-button {
+  align-self: center;
+  margin-top: $space-lg;
+}
+
+.loader {
+  flex: 1;
+  place-self: center;
+}

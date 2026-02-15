@@ -1,0 +1,17 @@
+<div class="parent-container">
+  <app-edit-form-info/>
+  <ul>
+    @for (question of formRes()!.questions; track question.id) {
+      <li>
+        <app-edit-form-question-wrapper
+          [question]="question"
+          [orderIndex]="$index"
+        />
+      </li>
+    }
+  </ul>
+  <button matFab extended class="component-add-button" (click)="onAddQuestionClick()">
+    <mat-icon fontIcon="add"/>
+    Add Question
+  </button>
+</div>

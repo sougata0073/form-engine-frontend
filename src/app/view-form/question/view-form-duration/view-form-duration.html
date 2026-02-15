@@ -1,0 +1,20 @@
+<form class="horizontal" [formGroup]="formGroup">
+  <mat-form-field class="decorated-mat-input form-field" hideRequiredMarker>
+    <mat-label>Hours</mat-label>
+    <input matInput formControlName="hours" type="number"
+           (focusout)="onFocusOut(formGroup.controls.hours)">
+    <mat-error>{{ formControlError(formGroup.controls.hours, []) }}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="decorated-mat-input form-field" hideRequiredMarker>
+    <mat-label>Minutes</mat-label>
+    <input matInput formControlName="minutes" type="number"
+           (focusout)="onFocusOut(formGroup.controls.minutes)">
+    <mat-error>{{ formControlError(formGroup.controls.minutes, []) }}</mat-error>
+  </mat-form-field>
+  <mat-form-field class="decorated-mat-input form-field" hideRequiredMarker>
+    <mat-label>Seconds</mat-label>
+    <input matInput formControlName="seconds" type="number"
+           (focusout)="onFocusOut(formGroup.controls.seconds)">
+    <mat-error>{{ formControlError(formGroup.controls.seconds, []) }}</mat-error>
+  </mat-form-field>
+</form>

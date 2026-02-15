@@ -1,0 +1,26 @@
+@use "index" as *;
+
+.parent-container {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.form-info-container {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+
+  p {
+    line-height: 1;
+    font-size: $space-md;
+  }
+
+  .title {
+    font-size: $space-xl;
+  }
+}
+
+.warning {
+  color: red;
+}

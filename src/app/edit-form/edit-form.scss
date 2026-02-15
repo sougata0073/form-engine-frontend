@@ -1,0 +1,41 @@
+.parent-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+
+  .main-content-container {
+    flex: 1;
+    justify-items: center;
+    margin-top: 2px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .main-content {
+    width: 50%;
+    height: 100%;
+  }
+}
+
+@media print {
+  .parent-container {
+    height: auto;
+    overflow: visible;
+  }
+
+  .main-content-container {
+    overflow: visible;
+    height: auto;
+    max-height: none;
+  }
+
+  .main-content {
+    width: 100%;
+    height: auto;
+  }
+
+  .header {
+    display: none;
+  }
+}
