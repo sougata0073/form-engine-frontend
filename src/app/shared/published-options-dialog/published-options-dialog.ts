@@ -1,5 +1,6 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {
+  MAT_DIALOG_DATA,
   MatDialog,
   MatDialogActions,
   MatDialogClose,
@@ -15,12 +16,13 @@ import {MatMenu, MatMenuTrigger} from '@angular/material/menu';
 import {CopyResponderLinkMenuContent} from '../copy-responder-link-menu-content/copy-responder-link-menu-content';
 import {Router} from '@angular/router';
 import {Clipboard} from '@angular/cdk/clipboard';
-import {EditFormService} from '../../service/edit-form-service';
+import {EditFormQuestionService} from '../../service/edit-form-question-service';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatFormField, MatInput} from '@angular/material/input';
 import {StopAcceptingResponseDialog} from '../stop-accepting-response-dialog/stop-accepting-response-dialog';
 import {DatePipe} from '@angular/common';
 import {ObjectUtil} from '../../util/object-util';
+import {FormInfoRes} from '../../model/form/form-info-res';
 
 @Component({
   selector: 'app-published-options-dialog',
@@ -46,11 +48,11 @@ import {ObjectUtil} from '../../util/object-util';
 export class PublishedOptionsDialog implements OnInit {
 
   protected router = inject(Router)
-  protected editFormService = inject(EditFormService)
+  protected editFormService = inject(EditFormQuestionService)
   protected dialogRef = inject(MatDialogRef<PublishedOptionsDialog>)
   protected dialog = inject(MatDialog)
 
-  protected formRes = this.editFormService.formRes
+  protected formInfo = inject<FormInfoRes>(MAT_DIALOG_DATA)
 
   protected editClicked = signal<boolean>(false)
   protected canSave = signal<boolean>(false)
@@ -62,12 +64,12 @@ export class PublishedOptionsDialog implements OnInit {
 
   ngOnInit() {
     this.formGroup.patchValue({
-      acceptingResponse: this.formRes()!.acceptingResponse,
-      notAcceptingResponseMessage: this.formRes()!.notAcceptingResponseMessage
+      acceptingResponse: this.formInfo.acceptingResponse,
+      notAcceptingResponseMessage: this.formInfo.notAcceptingResponseMessage
     })
 
     this.formGroup.valueChanges.subscribe(val => {
-      const canSave = !ObjectUtil.areMatchingFieldsSame(this.formRes(), val)
+      const canSave = !ObjectUtil.areMatchingFieldsSame(this.formInfo, val)
       this.canSave.set(canSave)
     })
 
@@ -80,31 +82,35 @@ export class PublishedOptionsDialog implements OnInit {
   protected onSaveClick() {
     if (!this.canSave()) return
 
-    const prevForm = this.formRes()!
+    const prevForm = this.formInfo
     const acceptingResponse = this.formGroup.value.acceptingResponse
-    this.editFormService.updateForm({
+    this.editFormService.updateFormInfo({
+      name: prevForm.name,
       title: prevForm.title,
       description: prevForm.description,
       published: prevForm.published,
       acceptingResponse: acceptingResponse ?? false,
       notAcceptingResponseMessage: this.formGroup.value.notAcceptingResponseMessage ?? 'This form is no longer accepting responses.',
-      userId: '5ea482fe-de87-4e18-aff6-6aca03ec50f9',
-      stopAcceptingResponseOn: acceptingResponse ? prevForm.stopAcceptingResponseOn : null,
+      stopAcceptingResponseOn: acceptingResponse ? new Date(prevForm.stopAcceptingResponseOn) : null,
       stopAcceptingResponseAfterResponse: acceptingResponse ? prevForm.stopAcceptingResponseAfterResponse : null
-    }, () => {
-      this.dialogRef.close()
+    }, (res) => {
+      this.dialogRef.close(res)
     })
   }
 
   protected openStopAcceptingResponseDialog() {
-    const ref = this.dialog.open(StopAcceptingResponseDialog)
-
-    ref.afterOpened().subscribe(() => {
-      this.dialogRef.close()
+    const ref = this.dialog.open(StopAcceptingResponseDialog, {
+      data: this.formInfo
     })
 
-    ref.afterClosed().subscribe(() => {
-      this.dialog.open(PublishedOptionsDialog)
+    ref.afterOpened().subscribe(() => {
+      this.dialogRef.close(this.formInfo)
+    })
+
+    ref.afterClosed().subscribe((res: FormInfoRes) => {
+      this.dialog.open(PublishedOptionsDialog, {
+        data: res ?? this.formInfo
+      })
     })
   }
 

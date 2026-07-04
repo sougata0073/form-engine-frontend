@@ -1,0 +1,58 @@
+<div class="parent-container">
+  <div class="rating-preview">
+    <p class="average-rating">Average rating (5.00)</p>
+    <ul>
+      <li>
+        <p>1</p>
+        <img [ngSrc]="ratingIconToPath('THUMB_UP', 'activated')" height="24" width="24">
+      </li>
+      <li>
+        <p>2</p>
+        <img [ngSrc]="ratingIconToPath('THUMB_UP', 'activated')" height="24" width="24">
+      </li>
+      <li>
+        <p>3</p>
+        <img [ngSrc]="ratingIconToPath('THUMB_UP', 'activated')" height="24" width="24">
+      </li>
+      <li>
+        <p>4</p>
+        <img [ngSrc]="ratingIconToPath('THUMB_UP', 'activated')" height="24" width="24">
+      </li>
+      <li>
+        <p>5</p>
+        <img [ngSrc]="ratingIconToPath('THUMB_UP', 'activated')" height="24" width="24">
+      </li>
+      <li>
+        <p>6</p>
+        <img [ngSrc]="ratingIconToPath('THUMB_UP', 'disabled')" height="24" width="24">
+      </li>
+      <li>
+        <p>7</p>
+        <img [ngSrc]="ratingIconToPath('THUMB_UP', 'disabled')" height="24" width="24">
+      </li>
+      <li>
+        <p>8</p>
+        <img [ngSrc]="ratingIconToPath('THUMB_UP', 'disabled')" height="24" width="24">
+      </li>
+      <li>
+        <p>9</p>
+        <img [ngSrc]="ratingIconToPath('THUMB_UP', 'disabled')" height="24" width="24">
+      </li>
+      <li>
+        <p>10</p>
+        <img [ngSrc]="ratingIconToPath('THUMB_UP', 'disabled')" height="24" width="24">
+      </li>
+    </ul>
+  </div>
+  <div class="column-chart-container">
+    <apx-chart
+      [series]="chartOptions.series!"
+      [chart]="chartOptions.chart!"
+      [plotOptions]="chartOptions.plotOptions!"
+      [dataLabels]="chartOptions.dataLabels!"
+      [xaxis]="chartOptions.xaxis!"
+      [yaxis]="chartOptions.yaxis!"
+      [title]="chartOptions.title!"
+    ></apx-chart>
+  </div>
+</div>

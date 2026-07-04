@@ -55,7 +55,7 @@ export class EditFormFileUpload extends EditFormQuestionComponent<FileUploadRes,
     this.showFileCategories.set(!!this.question().allowedFileTypes.length)
 
     this.formGroup.patchValue({
-      fileUploadSize: this.question().maxFileSizeInMB
+      fileUploadSize: this.question().maxFileSize / 1024 / 1024
     })
 
     this.emitCanSaveHasError()
@@ -69,7 +69,7 @@ export class EditFormFileUpload extends EditFormQuestionComponent<FileUploadRes,
   override getOnlyQuestionAddUpdateReq(): OnlyFileUploadAddUpdateReq {
     return {
       allowedFileCategories: this.selectedFileTypes().map(ft => ft.category).flat(),
-      maxFileSizeInMB: this.formGroup.value.fileUploadSize!
+      maxFileSize: this.formGroup.value.fileUploadSize! * 1024 * 1024
     }
   }
 

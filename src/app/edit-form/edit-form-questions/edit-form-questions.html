@@ -1,17 +1,31 @@
-<div class="parent-container">
-  <app-edit-form-info/>
-  <ul>
-    @for (question of formRes()!.questions; track question.id) {
-      <li>
-        <app-edit-form-question-wrapper
-          [question]="question"
-          [orderIndex]="$index"
-        />
-      </li>
-    }
-  </ul>
-  <button matFab extended class="component-add-button" (click)="onAddQuestionClick()">
-    <mat-icon fontIcon="add"/>
-    Add Question
-  </button>
+<div
+  class="parent-container"
+  [class.with-loader-only]="!formRes()">
+
+  @let form = formRes();
+
+  @if (form) {
+    <app-edit-form-info [formRes]="form"/>
+
+    <ul>
+      @for (question of form.questions; track question.id) {
+        <li>
+          <app-edit-form-question-wrapper
+            [question]="question"
+            [orderIndex]="$index"/>
+        </li>
+      }
+    </ul>
+
+    <button
+      matFab
+      extended
+      class="component-add-button"
+      (click)="onAddQuestionClick()">
+      <mat-icon fontIcon="add"/>
+      Add Question
+    </button>
+  } @else {
+    <mat-spinner class="loader"/>
+  }
 </div>

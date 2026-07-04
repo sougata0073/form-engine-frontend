@@ -1,10 +1,11 @@
-export interface FormAddUpdateRes {
+export interface FormInfoRes {
   id: string,
+  name: string,
   title: string,
   description: string,
   published: boolean,
   acceptingResponse: boolean,
   notAcceptingResponseMessage: string | null,
-  stopAcceptingResponseOn: Date,
+  stopAcceptingResponseOn: string,
   stopAcceptingResponseAfterResponse: number,
 }

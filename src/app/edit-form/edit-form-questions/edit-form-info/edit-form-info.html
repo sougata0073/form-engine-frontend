@@ -10,7 +10,7 @@
     </mat-form-field>
     <mat-form-field class="decorated-mat-input description">
       <mat-label>Form description</mat-label>
-      <input matInput type="text" formControlName="description" (focus)="formStateService.changeFocus(componentId())">
+      <textarea matInput type="text" formControlName="description" (focus)="formStateService.changeFocus(componentId())"></textarea>
     </mat-form-field>
   </form>
 </app-question-card>

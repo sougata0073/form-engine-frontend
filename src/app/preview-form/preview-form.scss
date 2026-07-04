@@ -96,7 +96,7 @@
         button {
           @include mat.button-overrides((
             text-container-shape: $space-xs,
-            text-label-text-color: rgb(95,99,104),
+            text-label-text-color: rgb(95, 99, 104),
             text-ripple-color: #DBD7BF,
             text-state-layer-color: #DBD7BF,
             text-hover-state-layer-opacity: 0.3
@@ -125,13 +125,43 @@
           margin: $space-md 0 $space-md 0;
         }
       }
-    }
 
-    .loader-container {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      .buttons-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .submit-button {
+          @include mat.button-overrides((
+            filled-container-shape: $space-xs,
+          ));
+        }
+
+        .clear-button {
+          @include mat.button-overrides((
+            text-container-shape: $space-xs
+          ));
+        }
+      }
+
+      .footer-container {
+        display: flex;
+        flex-direction: column;
+        gap: $space-md;
+        margin: $space-md 0 $space-md 0;
+
+        .never-submit-password-warning {
+          color: rgba(0, 0, 0, 0.66);
+        }
+      }
     }
+  }
+
+  .loader-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }

@@ -1,0 +1,69 @@
+<mat-card appearance="raised" class="card-container">
+  <mat-card-content class="card-content-container no-padding-card">
+
+    <div class="response-info-container">
+      <p class="number-of-response">{{ formSummary()?.responseCount }} responses</p>
+      <button matIconButton matTooltip="More options for responses">
+        <mat-icon fontIcon="more_vert"/>
+      </button>
+    </div>
+
+    <div class="tab-container" [class.show-border]="activatedLink() === 'question' || activatedLink() === 'individual'">
+      <nav class="edit-form-response-tab" mat-tab-nav-bar [tabPanel]="tabPanel">
+        @for (tab of tabs(); track $index) {
+          <a mat-tab-link
+             (click)="onTabClick(tab.link)"
+             [active]="activatedLink() === tab.link">
+            {{ tab.label }}
+          </a>
+        }
+      </nav>
+      <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+    </div>
+
+    @if (activatedLink() === 'question' && !!questionSummaries()) {
+      <div class="response-by-question-container">
+        <form [formGroup]="formGroup">
+          <mat-form-field class="decorated-mat-input no-required-marker" appearance="outline" subscriptSizing="dynamic">
+            <mat-select panelClass="decorated-select-option"
+                        formControlName="questionSelector"
+            >
+              @for (q of questionSummaries()?.questions; track q.id) {
+                <mat-option [value]="q.id">
+                  {{ q.question }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </form>
+        <mat-paginator #paginator class="decorated-paginator"
+                       [length]="questionSummaries()?.questions?.length ?? 0"
+                       [pageSize]="1"
+                       [showFirstLastButtons]="false"
+                       [hidePageSize]="true"
+                       [pageIndex]="0">
+        </mat-paginator>
+      </div>
+    } @else if (activatedLink() === 'individual') {
+      <div class="response-by-individual-container">
+        <mat-paginator class="decorated-paginator"
+                       [length]="questionSummaries()?.questions?.length ?? 0"
+                       [pageSize]="1"
+                       [showFirstLastButtons]="false"
+                       [hidePageSize]="true"
+                       [pageIndex]="0">
+        </mat-paginator>
+
+        <div class="response-by-individual-container-actions">
+          <button matIconButton matTooltip="Print response">
+            <mat-icon fontIcon="print"/>
+          </button>
+          <button matIconButton matTooltip="Delete response">
+            <mat-icon fontIcon="delete"/>
+          </button>
+        </div>
+      </div>
+    }
+
+  </mat-card-content>
+</mat-card>

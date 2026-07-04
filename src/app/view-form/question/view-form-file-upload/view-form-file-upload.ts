@@ -2,15 +2,15 @@ import {Component, inject, signal} from '@angular/core';
 import {ViewFormQuestionComponent} from '../../../type/view-form-question-component';
 import {FileUploadRes} from '../../../model/edit-form/question/response/file-upload-res';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MatButton} from '@angular/material/button';
+import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatError} from '@angular/material/input';
 import {MatDialog} from '@angular/material/dialog';
 import {SimpleDialog} from '../../../shared/simple-dialog/simple-dialog';
 import {
-  FileUploadResponsePutReq,
   OnlyFileUploadResponsePutReq
 } from '../../../model/view-form/request/file-upload-response-put-req';
+import {MatTooltip} from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-view-form-file-upload',
@@ -19,14 +19,16 @@ import {
     ReactiveFormsModule,
     MatIcon,
     MatButton,
-    MatError
+    MatError,
+    MatIconButton,
+    MatTooltip
   ],
   templateUrl: './view-form-file-upload.html',
   styleUrl: './view-form-file-upload.scss',
 })
 export class ViewFormFileUpload extends ViewFormQuestionComponent<FileUploadRes, OnlyFileUploadResponsePutReq> {
 
-  private selectedFile: File | null = null
+  protected selectedFile: File | null = null
   protected allowedFileMimes = signal<string[]>([])
 
   override formGroup = new FormGroup({
@@ -61,21 +63,21 @@ export class ViewFormFileUpload extends ViewFormQuestionComponent<FileUploadRes,
     this.selectedFile = fileList?.item(0) ?? null
     if (!this.selectedFile) return
 
-    const maxFileSizeInBytes = this.question().maxFileSizeInMB * 1024 * 1024
     const actualFileSizeInMb = (this.selectedFile.size / 1024 / 1024).toFixed(2)
-    if (this.selectedFile.size > maxFileSizeInBytes) {
+    const maxFileSizeInMb = (this.question().maxFileSize / 1024 / 1024).toFixed(2)
+
+    if (this.selectedFile.size > this.question().maxFileSize) {
       this.selectedFile = null
       this.formGroup.controls.file.patchValue(null)
       this.dialog.open(
         SimpleDialog,
         SimpleDialog.configure(
           'Error',
-          `Maximum allowed file size is ${this.question().maxFileSizeInMB} MB. Uploaded file size is ${actualFileSizeInMb} MB.`,
+          `Maximum allowed file size is ${maxFileSizeInMb} MB. Uploaded file size is ${actualFileSizeInMb} MB.`,
           'Ok'
         )
       )
       return
     }
   }
-
 }

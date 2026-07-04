@@ -1,10 +1,10 @@
-@use 'index' as *;
+@use "index" as *;
 @use "@angular/material" as mat;
 
 .parent-container {
   display: flex;
   flex-direction: column;
-  padding: $space-md 0 $space-md 0;
+  padding: $space-md 0;
 }
 
 .parent-container.with-loader-only {
@@ -13,7 +13,7 @@
 }
 
 li {
-  margin: $space-md 0 $space-md 0;
+  margin: $space-md 0;
   list-style: none;
 }
 
@@ -24,5 +24,13 @@ li {
 
 .loader {
   flex: 1;
-  place-self: center;
+  align-self: center;
+  justify-self: center;
+}
+
+@media print {
+  .component-add-button,
+  .loader {
+    display: none;
+  }
 }

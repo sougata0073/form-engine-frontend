@@ -30,6 +30,13 @@
   flex-direction: row;
   align-items: center;
   margin-left: auto;
+
+  .profile-photo {
+    width: $space-xl;
+    height: $space-xl;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 }
 
 .title {

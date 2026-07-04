@@ -1,0 +1,12 @@
+@use 'index' as *;
+@use '@angular/material' as mat;
+
+.parent-container {
+  display: flex;
+  flex-direction: column;
+  padding: $space-md 0 $space-md 0;
+
+  .header {
+    margin: 0 0 $space-sm 0;
+  }
+}

@@ -14,8 +14,7 @@ import {MatButton} from '@angular/material/button';
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    MatButton,
-    MatDialogClose
+    MatButton
   ],
   templateUrl: './functional-dialog.html',
   styleUrl: './functional-dialog.scss',

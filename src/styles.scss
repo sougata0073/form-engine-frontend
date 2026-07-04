@@ -58,6 +58,27 @@ body {
   .mat-mdc-form-field-error-wrapper {
     padding: 0 $space-xxs 0 $space-xxs;
   }
+
+  .mdc-text-field--outlined {
+    .mat-mdc-form-field-flex {
+      .mat-mdc-form-field-infix {
+        padding-left: $space-sm;
+        padding-right: $space-sm;
+
+        .mat-mdc-select {
+          .mat-mdc-select-arrow-wrapper {
+            margin-left: $space-xs;
+          }
+        }
+      }
+    }
+  }
+}
+
+.mat-mdc-form-field.no-required-marker {
+  .mat-mdc-form-field-required-marker {
+    display: none;
+  }
 }
 
 form.vertical {
@@ -79,6 +100,18 @@ form.vertical {
   .horizontal {
     flex-direction: column;
     gap: 0;
+  }
+}
+
+.mat-mdc-card-content.no-padding-card {
+  padding: 0;
+
+  &:first-child {
+    padding: 0;
+  }
+
+  &:last-child {
+    padding: 0;
   }
 }
 
@@ -148,6 +181,21 @@ form.vertical {
   }
 }
 
+.edit-form-response-tab {
+  .mat-mdc-tab-link-container {
+
+    .mat-mdc-tab-links {
+      .mdc-tab--active {
+        .mdc-tab-indicator {
+          .mdc-tab-indicator__content--underline {
+            width: 58px;
+          }
+        }
+      }
+    }
+  }
+}
+
 .decorated-menu {
   @include mat.menu-overrides((
     container-color: white
@@ -160,4 +208,8 @@ form.vertical {
 
 .mat-mdc-dialog-content.no-scroll {
   overflow: visible;
+}
+
+.mat-mdc-paginator.decorated-paginator {
+  background-color: transparent;
 }

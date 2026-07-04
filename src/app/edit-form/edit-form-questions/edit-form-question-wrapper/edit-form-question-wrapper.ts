@@ -27,7 +27,7 @@ import {QUESTION_TYPE_GROUPS} from '../../../constant/question-type-groups';
 import {EditQuestionConstant} from '../../../constant/edit-question-constant';
 import {EditQuestionMoreMenuItem} from '../../../type/edit-question-more-menu-item';
 import {EditFormQuestionComponent} from '../../../type/edit-form-question-component';
-import {EditFormService} from '../../../service/edit-form-service';
+import {EditFormQuestionService} from '../../../service/edit-form-question-service';
 import {EditFormQuestionComponentFactory} from '../../../service/edit-form-question-component-factory';
 import {AnyQuestionAddUpdateReq} from '../../../type/any-question-add-update-req';
 import {QuestionAddUpdateReq} from '../../../model/edit-form/question/request/question-add-update-req';
@@ -76,7 +76,7 @@ export class EditFormQuestionWrapper implements OnInit, AfterViewInit, OnDestroy
   protected hasError = signal<boolean>(false)
 
   protected editFormStateService = inject(EditFormStateService)
-  protected editFormService = inject(EditFormService)
+  protected editFormService = inject(EditFormQuestionService)
   private componentFactory = inject(EditFormQuestionComponentFactory)
 
   protected formGroup = new FormGroup({
@@ -145,6 +145,9 @@ export class EditFormQuestionWrapper implements OnInit, AfterViewInit, OnDestroy
   }
 
   protected onCopyQuestionClick() {
+
+    this.editFormStateService.isFormGettingModified.set(true)
+
     const questionAddUpdateReq: QuestionAddUpdateReq = {
       question: this.question().question,
       description: this.question().description,
@@ -165,11 +168,18 @@ export class EditFormQuestionWrapper implements OnInit, AfterViewInit, OnDestroy
       ...onlyQuestionAddUpdateReq
     }
 
-    this.editFormService.addQuestion(question)
+    this.editFormService.addQuestion(question, () => {
+      this.editFormStateService.isFormGettingModified.set(false)
+    })
   }
 
   protected onDeleteQuestionClick() {
-    this.editFormService.deleteQuestion(this.question().id, this.question().questionType)
+
+    this.editFormStateService.isFormGettingModified.set(true)
+
+    this.editFormService.deleteQuestion(this.question().id, this.question().questionType, () => {
+      this.editFormStateService.isFormGettingModified.set(false)
+    })
   }
 
   protected toggleSelectedMoreMenuItemIds(itemId: string) {
@@ -245,10 +255,22 @@ export class EditFormQuestionWrapper implements OnInit, AfterViewInit, OnDestroy
   }
 
   private updateQuestion(questionAddUpdateReq: AnyQuestionAddUpdateReq, recreateComponent: boolean) {
+
     if (!this.canSaveQuestion()) return
+
+    const showLoader = this.question().questionType !== questionAddUpdateReq.questionType
+
+    if (showLoader) {
+      this.editFormStateService.isFormGettingModified.set(true)
+    }
 
     this.editFormService.updateQuestion(
       this.question().id, questionAddUpdateReq, questionRes => {
+
+        if (showLoader) {
+          this.editFormStateService.isFormGettingModified.set(false)
+        }
+
         if (recreateComponent) {
           this.createComponent(questionRes.questionType, questionRes)
         }

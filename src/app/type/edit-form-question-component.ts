@@ -1,6 +1,6 @@
 import {QuestionRes} from '../model/edit-form/question/response/question-res';
 import {Directive, inject, input, output} from '@angular/core';
-import {EditFormService} from '../service/edit-form-service';
+import {EditFormQuestionService} from '../service/edit-form-question-service';
 import {ObjectUtil} from '../util/object-util';
 import {AnyOnlyQuestionAddUpdateReq} from './any-only-question-add-update-req';
 

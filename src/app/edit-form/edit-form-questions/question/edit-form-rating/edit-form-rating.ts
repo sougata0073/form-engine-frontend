@@ -18,7 +18,6 @@ import {OnlyRatingAddUpdateReq} from '../../../../model/edit-form/question/reque
   selector: 'app-edit-form-rating',
   imports: [
     FormsModule,
-    MatError,
     MatFormField,
     MatOption,
     MatSelect,
@@ -65,7 +64,7 @@ export class EditFormRating extends EditFormQuestionComponent<RatingRes, OnlyRat
     }
   }
 
-  protected ratingIconToPath(ratingIcon: RatingIcon, suffix: 'activated' | 'deactivated') {
+  protected ratingIconToPath(ratingIcon: RatingIcon, suffix: 'activated' | 'deactivated' | 'disabled') {
     const pathPrefix = 'assets/images/rating-icons/'
     return `${pathPrefix}${kebabCase(ratingIcon)}-${suffix}.svg`
   }

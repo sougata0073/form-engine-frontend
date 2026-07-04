@@ -31,7 +31,6 @@ import {OnlyTickBoxGridAddUpdateReq} from '../../../../model/edit-form/question/
     EditFormDropdownOption,
     EditFormCheckboxOption,
     MatButton,
-    MatIcon,
     MatCheckbox,
     ReactiveFormsModule
   ],

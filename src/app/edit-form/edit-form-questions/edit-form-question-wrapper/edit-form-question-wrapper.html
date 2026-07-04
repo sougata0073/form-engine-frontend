@@ -10,10 +10,11 @@
                (focus)="editFormStateService.changeFocus(componentId())"
                formControlName="question"
                #questionInput
+               [required]="!!formGroup.controls.required.value && !editFormStateService.isFocused(this.componentId())"
         >
       </mat-form-field>
       @if (showQuestionTypeSelector()) {
-        <mat-form-field class="decorated-mat-input form-field">
+        <mat-form-field class="decorated-mat-input form-field no-required-marker">
           <mat-label>Question type</mat-label>
           <mat-select panelClass="decorated-select-option"
                       formControlName="questionType"

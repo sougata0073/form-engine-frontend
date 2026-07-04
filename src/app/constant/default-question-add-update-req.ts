@@ -15,7 +15,7 @@ export class DefaultQuestionAddUpdateReq {
     ['DATE_TIME', {}],
     ['DROPDOWN', {options: ['Option 1']}],
     ['DURATION', {}],
-    ['FILE_UPLOAD', {allowedFileCategories: [], maxFileSizeInMB: 10}],
+    ['FILE_UPLOAD', {allowedFileCategories: [], maxFileSize: 10}],
     ['LINEAR_SCALE', {fromNumber: 1, toNumber: 5}],
     ['MULTIPLE_CHOICE', {options: ['Option 1']}],
     ['MULTIPLE_CHOICE_GRID', {eachRowRequired: false, rows: ['Row 1'], columns: ['Column 1']}],

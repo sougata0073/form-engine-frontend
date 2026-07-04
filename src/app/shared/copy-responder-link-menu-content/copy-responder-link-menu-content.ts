@@ -1,13 +1,16 @@
 import {Component, inject, input, OnInit, output} from '@angular/core';
-import {MatButton} from "@angular/material/button";
+import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatFormField, MatInput} from "@angular/material/input";
 import {FormControl, FormGroup, ReactiveFormsModule} from "@angular/forms";
-import {MatMenu} from '@angular/material/menu';
+import {MatMenu, MatMenuTrigger} from '@angular/material/menu';
 import {Clipboard} from '@angular/cdk/clipboard';
-import {EditFormService} from '../../service/edit-form-service';
+import {EditFormQuestionService} from '../../service/edit-form-question-service';
 import {Router} from '@angular/router';
 import {FormRes} from '../../model/form/form-res';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {PublishFormDialog} from '../publish-form-dialog/publish-form-dialog';
+import {MatDialog} from '@angular/material/dialog';
+import {FormInfoRes} from '../../model/form/form-info-res';
 
 @Component({
   selector: 'app-copy-responder-link-menu-content',
@@ -21,7 +24,7 @@ import {MatSnackBar} from '@angular/material/snack-bar';
   styleUrl: './copy-responder-link-menu-content.scss',
 })
 export class CopyResponderLinkMenuContent implements OnInit {
-  formRes = input.required<FormRes>()
+  formInfo = input.required<FormInfoRes>()
 
   copy = output<void>()
   publish = output<void>()
@@ -29,6 +32,7 @@ export class CopyResponderLinkMenuContent implements OnInit {
   protected router = inject(Router)
   protected clipboard = inject(Clipboard)
   protected snackbar = inject(MatSnackBar)
+  private dialog = inject(MatDialog)
 
   protected copyResponderLinkFormGroup = new FormGroup({
     link: new FormControl<string | null>({value: null, disabled: true})
@@ -38,6 +42,12 @@ export class CopyResponderLinkMenuContent implements OnInit {
     this.copyResponderLinkFormGroup.controls.link.patchValue(this.getFullFormUrl())
   }
 
+  protected onPublishClick() {
+    this.dialog.open(PublishFormDialog, {
+      data: this.formInfo
+    })
+  }
+
   protected onCopyClick() {
     this.clipboard.copy(this.getFullFormUrl())
 
@@ -45,13 +55,11 @@ export class CopyResponderLinkMenuContent implements OnInit {
       horizontalPosition: 'start',
       verticalPosition: 'bottom'
     })._dismissAfter(2000)
-
-    this.copy.emit()
   }
 
   private getFullFormUrl() {
     const relativeUrl = this.router.serializeUrl(
-      this.router.createUrlTree(['forms', this.formRes().id, 'view'])
+      this.router.createUrlTree(['forms', this.formInfo().id, 'view'])
     )
     return `${window.location.origin}${relativeUrl}`
   }

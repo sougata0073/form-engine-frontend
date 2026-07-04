@@ -1,10 +1,21 @@
-import {ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy, OnInit, signal} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  OnDestroy,
+  OnInit,
+  signal
+} from '@angular/core';
 import {QuestionCard} from '../../../shared/question-card/question-card';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {EditFormStateService} from '../../../service/edit-form-state-service';
 import {FocusableComponent} from '../../../type/focusable-component';
-import {EditFormService} from '../../../service/edit-form-service';
+import {EditFormQuestionService} from '../../../service/edit-form-question-service';
+import {FormRes} from '../../../model/form/form-res';
 
 @Component({
   selector: 'app-edit-form-info',
@@ -20,18 +31,16 @@ import {EditFormService} from '../../../service/edit-form-service';
 })
 export class EditFormInfo implements OnInit, FocusableComponent {
 
+  formRes = input.required<FormRes>()
+
   componentId = signal(crypto.randomUUID())
 
-  protected editFormService = inject(EditFormService)
+  protected editFormService = inject(EditFormQuestionService)
   protected formStateService = inject(EditFormStateService)
 
-  protected formRes = computed(() => {
-    return this.editFormService.formRes()!
-  })
-
   protected formGroup = new FormGroup({
-    title: new FormControl<string | null>('', [Validators.required]),
-    description: new FormControl<string | null>('', [Validators.required])
+    title: new FormControl<string | null>(''),
+    description: new FormControl<string | null>('')
   })
 
   ngOnInit() {
@@ -43,15 +52,15 @@ export class EditFormInfo implements OnInit, FocusableComponent {
     this.formGroup.valueChanges.subscribe(val => {
       if (this.formGroup.invalid) return
 
-      this.editFormService.updateForm({
+      this.editFormService.updateFormInfo({
+        name: this.formRes().name,
         title: val.title!,
         description: val.description!,
         acceptingResponse: this.formRes().acceptingResponse,
         notAcceptingResponseMessage: this.formRes().notAcceptingResponseMessage,
         published: this.formRes().published,
         stopAcceptingResponseAfterResponse: this.formRes().stopAcceptingResponseAfterResponse,
-        stopAcceptingResponseOn: this.formRes().stopAcceptingResponseOn,
-        userId: '5ea482fe-de87-4e18-aff6-6aca03ec50f9'
+        stopAcceptingResponseOn: new Date(this.formRes().stopAcceptingResponseOn)
       })
     })
   }

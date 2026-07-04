@@ -9,7 +9,7 @@
               [parentComponentId]="parentComponentId()"
               [option]="row"
               (remove)="removeRow(row.id)"
-              [disableRemove]="formStateService.isFocused(parentComponentId())"
+              [disableRemove]="!formStateService.isFocused(parentComponentId())"
               (optionTextChange)="onRowTextChange($event)"
               (canSaveQuestion)="onRowCanSaveChange(row.id, $event)"
             />

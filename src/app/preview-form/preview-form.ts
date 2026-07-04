@@ -9,12 +9,16 @@ import {MatIcon} from '@angular/material/icon';
 import {MatTooltip} from '@angular/material/tooltip';
 import {MatProgressSpinner} from '@angular/material/progress-spinner';
 import {Title} from '@angular/platform-browser';
-import {EditFormService} from '../service/edit-form-service';
+import {EditFormQuestionService} from '../service/edit-form-question-service';
 import {MatMenu, MatMenuTrigger} from '@angular/material/menu';
 import {
   CopyResponderLinkMenuContent
 } from '../shared/copy-responder-link-menu-content/copy-responder-link-menu-content';
 import {MatDialog} from '@angular/material/dialog';
+import {ViewFormFooter} from '../shared/view-form-footer/view-form-footer';
+import {BehaviorSubject} from 'rxjs';
+import {FunctionalDialog} from '../shared/functional-dialog/functional-dialog';
+import {FormRes} from '../model/form/form-res';
 
 @Component({
   selector: 'app-preview-form',
@@ -30,7 +34,8 @@ import {MatDialog} from '@angular/material/dialog';
     MatProgressSpinner,
     MatMenuTrigger,
     MatMenu,
-    CopyResponderLinkMenuContent
+    CopyResponderLinkMenuContent,
+    ViewFormFooter
   ],
   templateUrl: './preview-form.html',
   styleUrl: './preview-form.scss',
@@ -38,20 +43,26 @@ import {MatDialog} from '@angular/material/dialog';
 export class PreviewForm implements OnInit {
 
   formId = signal<string>('')
-  protected isFormLoaded = signal<boolean>(false)
 
-  protected editFormService = inject(EditFormService)
+  protected editFormService = inject(EditFormQuestionService)
   protected activatedRoute = inject(ActivatedRoute)
   protected router = inject(Router)
   protected title = inject(Title)
+  protected dialog = inject(MatDialog)
+
+  protected _clearClick = new BehaviorSubject<boolean>(false)
+  protected clearClick = this._clearClick.asObservable()
+
+  protected formRes = signal<FormRes | null>(null)
 
   ngOnInit() {
     this.activatedRoute.parent!.paramMap.subscribe(params => {
-      this.formId.set(params.get('formId')!);
-      this.editFormService.loadFormRes(this.formId(), () => {
-        this.isFormLoaded.set(true)
 
-        this.title.setTitle(this.editFormService.formRes()?.title ?? 'Form engine')
+      this.formId.set(params.get('formId')!);
+
+      this.editFormService.loadFormRes(this.formId(), (res) => {
+        this.formRes.set(res)
+        this.title.setTitle(res.title ?? 'Form engine')
       })
     });
   }
@@ -64,5 +75,21 @@ export class PreviewForm implements OnInit {
     this.router.navigate(
       ['forms', this.formId(), 'edit'], {queryParams: {'publishedOptions': 1}}
     )
+  }
+
+  protected onClearClick() {
+    const dialogRef = this.dialog.open(FunctionalDialog, {
+      data: FunctionalDialog.configure(
+        'Clear form?',
+        'This will remove your answers from all questions and cannot be undone.',
+        'Cancel',
+        () => dialogRef.close(),
+        'Clear form',
+        () => {
+          this._clearClick.next(true)
+          dialogRef.close()
+        }
+      )
+    })
   }
 }

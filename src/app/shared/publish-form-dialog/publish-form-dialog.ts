@@ -1,5 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {
+  MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
@@ -9,7 +10,8 @@ import {
 import {MatDivider} from '@angular/material/list';
 import {MatIcon} from '@angular/material/icon';
 import {MatButton} from '@angular/material/button';
-import {EditFormService} from '../../service/edit-form-service';
+import {EditFormQuestionService} from '../../service/edit-form-question-service';
+import {FormInfoRes} from '../../model/form/form-info-res';
 
 @Component({
   selector: 'app-publish-form-dialog',
@@ -27,24 +29,25 @@ import {EditFormService} from '../../service/edit-form-service';
 })
 export class PublishFormDialog {
 
-  protected editFormService = inject(EditFormService)
+  protected editFormService = inject(EditFormQuestionService)
   protected dialogRef = inject(MatDialogRef<PublishFormDialog>)
 
-  protected formRes = this.editFormService.formRes
+  protected formInfo = inject<FormInfoRes>(MAT_DIALOG_DATA)
 
   protected onPublishClick() {
-    const prevForm = this.formRes()!
-    this.editFormService.updateForm({
+    const prevForm = this.formInfo
+
+    this.editFormService.updateFormInfo({
+      name: prevForm.name,
       title: prevForm.title,
       description: prevForm.description,
       acceptingResponse: prevForm.acceptingResponse,
       notAcceptingResponseMessage: prevForm.notAcceptingResponseMessage,
       published: true,
-      userId: '5ea482fe-de87-4e18-aff6-6aca03ec50f9',
-      stopAcceptingResponseOn: prevForm.stopAcceptingResponseOn,
+      stopAcceptingResponseOn: new Date(prevForm.stopAcceptingResponseOn),
       stopAcceptingResponseAfterResponse: prevForm.stopAcceptingResponseAfterResponse
-    }, () => {
-      this.dialogRef.close()
+    }, (res) => {
+      this.dialogRef.close(res)
     })
   }
 

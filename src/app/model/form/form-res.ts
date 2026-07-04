@@ -1,6 +1,6 @@
 import {AnyQuestionRes} from '../../type/any-question-res';
-import {FormAddUpdateRes} from './form-add-update-res';
+import {FormInfoRes} from './form-info-res';
 
-export interface FormRes extends FormAddUpdateRes {
+export interface FormRes extends FormInfoRes {
   questions: AnyQuestionRes[]
 }

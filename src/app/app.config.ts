@@ -10,9 +10,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideHttpClient(
-      // withInterceptors(
-      //   [HttpInterceptors.baseUrlInterceptor('http://localhost:9092/api/v1/')]
-      // )
+      withInterceptors(
+        [HttpInterceptors.AuthJwtInterceptor]
+      )
     )
   ]
 };

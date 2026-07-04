@@ -3,7 +3,7 @@ import {FileType} from '../../../../type/file-type';
 
 export interface OnlyFileUploadRes {
   allowedFileTypes: FileType[],
-  maxFileSizeInMB: number
+  maxFileSize: number
 }
 
 export interface FileUploadRes extends OnlyFileUploadRes, QuestionRes {

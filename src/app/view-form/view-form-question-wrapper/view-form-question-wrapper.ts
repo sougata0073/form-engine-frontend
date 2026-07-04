@@ -33,8 +33,8 @@ import {QuestionResponsePutReq} from '../../model/view-form/request/question-res
 export class ViewFormQuestionWrapper implements OnInit {
 
   question = input.required<AnyQuestionRes>()
-  submitClick = input.required<Observable<boolean>>()
-  clearClick = input.required<Observable<boolean>>()
+  submitClick = input<Observable<boolean>>()
+  clearClick = input<Observable<boolean>>()
 
   questionResponse = output<AnyQuestionResponsePutReq>()
 
@@ -48,7 +48,7 @@ export class ViewFormQuestionWrapper implements OnInit {
 
   ngOnInit() {
     this.createComponent(this.question().questionType, this.question())
-    this.submitClick().subscribe(val => {
+    this.submitClick()?.subscribe(val => {
       const instance = this.createdComponentRef?.instance
       if (val && instance instanceof ViewFormQuestionComponent) {
         const onlyQuestionResponse = instance.getOnlyQuestionResponsePutReq()
@@ -64,7 +64,7 @@ export class ViewFormQuestionWrapper implements OnInit {
         }
       }
     })
-    this.clearClick().subscribe(val => {
+    this.clearClick()?.subscribe(val => {
       const instance = this.createdComponentRef?.instance
       if (val && instance instanceof ViewFormQuestionComponent) {
         instance.clearForm()

@@ -1,10 +1,17 @@
 <div class="parent-container">
-  @if (isFormLoaded()) {
-    <app-edit-form-header class="header"/>
-    <div class="main-content-container">
-      <div class="main-content">
-        <router-outlet/>
-      </div>
+  <app-edit-form-header [formId]="formId()" class="header"/>
+
+  <div class="main-content-container">
+    <div
+      class="main-content"
+      [class.loading]="editFormStateService.isFormGettingModified()">
+      <router-outlet/>
     </div>
-  }
+
+    @if (editFormStateService.isFormGettingModified()) {
+      <div class="loader-overlay">
+        <mat-spinner/>
+      </div>
+    }
+  </div>
 </div>

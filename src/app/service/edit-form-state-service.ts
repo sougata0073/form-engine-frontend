@@ -5,6 +5,7 @@ import {Injectable, signal} from '@angular/core';
 })
 export class EditFormStateService {
   private focusedComponentId = signal<string | null>(null)
+  public isFormGettingModified = signal<boolean>(false)
 
   changeFocus(id: string | null) {
     if (this.focusedComponentId() !== id) {

@@ -1,5 +1,6 @@
 import {Component, effect, inject, model, OnDestroy, OnInit, signal} from '@angular/core';
 import {
+  MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
@@ -8,7 +9,7 @@ import {
 } from '@angular/material/dialog';
 import {MatDivider} from '@angular/material/list';
 import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
-import {EditFormService} from '../../service/edit-form-service';
+import {EditFormQuestionService} from '../../service/edit-form-question-service';
 import {DatePipe} from '@angular/common';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -16,10 +17,11 @@ import {MatError, MatFormField, MatHint, MatInput, MatLabel, MatSuffix} from '@a
 import {MatTooltip} from '@angular/material/tooltip';
 import {MatIcon} from '@angular/material/icon';
 import {MatMenu, MatMenuTrigger} from '@angular/material/menu';
-import {MatCalendar, MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
+import {MatCalendar, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MatTimepicker, MatTimepickerInput, MatTimepickerToggle} from '@angular/material/timepicker';
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatCard} from '@angular/material/card';
+import {FormInfoRes} from '../../model/form/form-info-res';
 
 @Component({
   selector: 'app-stop-accepting-response-dialog',
@@ -56,10 +58,10 @@ import {MatCard} from '@angular/material/card';
 })
 export class StopAcceptingResponseDialog implements OnInit, OnDestroy {
 
-  protected editFormService = inject(EditFormService)
+  protected editFormService = inject(EditFormQuestionService)
   protected dialogRef = inject(MatDialogRef<StopAcceptingResponseDialog>)
 
-  protected formRes = this.editFormService.formRes
+  protected formInfo = inject<FormInfoRes>(MAT_DIALOG_DATA)
 
   protected selectedDate = model<Date | null>(null)
 
@@ -88,22 +90,22 @@ export class StopAcceptingResponseDialog implements OnInit, OnDestroy {
   ngOnInit() {
     let radioGroupValue: 'date' | 'response-limit' | null = null;
 
-    if (this.formRes()!.stopAcceptingResponseOn === null &&
-      this.formRes()!.stopAcceptingResponseAfterResponse === null) {
+    if (this.formInfo.stopAcceptingResponseOn === null &&
+      this.formInfo.stopAcceptingResponseAfterResponse === null) {
       radioGroupValue = 'date'
-    } else if (this.formRes()!.stopAcceptingResponseOn) {
+    } else if (this.formInfo.stopAcceptingResponseOn) {
       radioGroupValue = 'date'
-    } else if (this.formRes()!.stopAcceptingResponseAfterResponse >= 0) {
+    } else if (this.formInfo.stopAcceptingResponseAfterResponse >= 0) {
       radioGroupValue = 'response-limit'
     }
 
     this.formGroup.patchValue({
       radioGroup: radioGroupValue,
-      responseLimit: this.formRes()!.stopAcceptingResponseAfterResponse,
-      notAcceptingResponseMessage: this.formRes()!.notAcceptingResponseMessage
+      responseLimit: this.formInfo.stopAcceptingResponseAfterResponse,
+      notAcceptingResponseMessage: this.formInfo.notAcceptingResponseMessage
     })
 
-    this.selectedDateTime.set(this.formRes()!.stopAcceptingResponseOn)
+    this.selectedDateTime.set(new Date(this.formInfo.stopAcceptingResponseOn))
 
     this.formGroup.valueChanges.subscribe(() => this.setCanSave())
   }
@@ -134,8 +136,9 @@ export class StopAcceptingResponseDialog implements OnInit, OnDestroy {
   protected onSaveClick() {
     if (!this.canSave()) return
 
-    const prevForm = this.formRes()!
-    this.editFormService.updateForm({
+    const prevForm = this.formInfo
+
+    this.editFormService.updateFormInfo({
       acceptingResponse: true,
       description: prevForm.description,
       notAcceptingResponseMessage: this.formGroup.value.notAcceptingResponseMessage ?? 'This form is no longer accepting responses.',
@@ -146,9 +149,9 @@ export class StopAcceptingResponseDialog implements OnInit, OnDestroy {
       stopAcceptingResponseOn:
         this.formGroup.value.radioGroup === 'date' ?
           this.selectedDateTime() : null,
-      title: prevForm.title,
-      userId: '5ea482fe-de87-4e18-aff6-6aca03ec50f9',
-    }, () => this.dialogRef.close())
+      name: prevForm.name,
+      title: prevForm.title
+    }, res => this.dialogRef.close(res))
   }
 
   protected setCanSave() {
