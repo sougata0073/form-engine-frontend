@@ -65,9 +65,9 @@ export class EditFormCheckbox
 
   ngOnInit() {
     this.options.set(
-      this.question().options.map((op) => {
-        return {id: crypto.randomUUID(), text: op, valid: !!op}
-      })
+      this.question().options
+        .sort((a, b) => a.orderIndex - b.orderIndex)
+        .map((op) => ({...op, valid: !!op.option}))
     )
 
     this.setupResponseValidationForm()
@@ -110,7 +110,12 @@ export class EditFormCheckbox
 
   override getOnlyQuestionAddUpdateReq(): OnlyCheckboxAddUpdateReq<AnyCheckboxValidationConfig> {
     return {
-      options: this.options().map(val => val.text),
+      options: this.options().map(val => {
+        return {
+          id: val.id.startsWith('NEW_') ? null : val.id,
+          option: val.option
+        }
+      }),
       validationConfig: this.getValidationConfig()
     }
   }
@@ -128,7 +133,13 @@ export class EditFormCheckbox
       return
     }
     this.options.update(val => {
-      const option = {id: crypto.randomUUID(), text: `Option ${val.length + 1}`, valid: true}
+      const option = {
+        id: 'NEW_' + crypto.randomUUID(),
+        option: `Option ${val.length + 1}`,
+        orderIndex: val.length,
+        valid: true
+      }
+
       return [...val, option]
     })
     this.emitCanSaveAndHasError()
@@ -145,8 +156,9 @@ export class EditFormCheckbox
 
   protected onOptionTextChange(option: CheckboxOption) {
     this.options.update(val =>
-      val.map(v => v.id === option.id ? {...v, text: option.text} : v)
+      val.map(v => v.id === option.id ? {...v, option: option.option} : v)
     )
+    this.emitCanSaveAndHasError()
     this.updateQuestion.emit(this.getOnlyQuestionAddUpdateReq())
   }
 
@@ -176,7 +188,6 @@ export class EditFormCheckbox
     } else {
       this.hasError.emit(!allOptionsValid)
       this.canSaveQuestion.emit(allOptionsValid)
-      console.log(allOptionsValid)
     }
   }
 

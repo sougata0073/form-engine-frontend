@@ -37,14 +37,16 @@ export class ViewFormDropdown extends ViewFormQuestionComponent<DropdownRes, Onl
 
     this.options.update(() => {
       return this.question().options.map(op => {
-        return {value: crypto.randomUUID(), label: op}
+        return {value: op.id, label: op.option}
       })
     })
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyDropdownResponsePutReq | null {
-    const selectedValue = this.formGroup.value.dropdown
-    const index = this.options().findIndex(op => op.value === selectedValue)
-    return index === -1 ? null : {responseIndex: index}
+  override getOnlyQuestionResponsePutReq(): OnlyDropdownResponsePutReq {
+    const id = this.formGroup.value.dropdown
+
+    return {
+      responseOptionId: id ?? null
+    }
   }
 }

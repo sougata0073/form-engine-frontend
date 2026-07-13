@@ -53,7 +53,7 @@ export class PreviewForm implements OnInit {
   protected _clearClick = new BehaviorSubject<boolean>(false)
   protected clearClick = this._clearClick.asObservable()
 
-  protected formRes = signal<FormRes | null>(null)
+  protected formRes = this.editFormService.formRes
 
   ngOnInit() {
     this.activatedRoute.parent!.paramMap.subscribe(params => {
@@ -61,7 +61,6 @@ export class PreviewForm implements OnInit {
       this.formId.set(params.get('formId')!);
 
       this.editFormService.loadFormRes(this.formId(), (res) => {
-        this.formRes.set(res)
         this.title.setTitle(res.title ?? 'Form engine')
       })
     });
@@ -73,7 +72,7 @@ export class PreviewForm implements OnInit {
 
   protected onManagePublishSettingsClick() {
     this.router.navigate(
-      ['forms', this.formId(), 'edit'], {queryParams: {'publishedOptions': 1}}
+      ['forms', this.formId(), 'edit', 'questions'], {queryParams: {'publishedOptions': 1}}
     )
   }
 

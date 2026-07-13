@@ -1,1 +1,5 @@
-export type MultipleChoiceOption = { id: string, text: string, valid: boolean }
+import {OnlyMultipleChoiceOptionRes} from '../model/edit-form/question/response/multiple-choice-res';
+
+export interface MultipleChoiceOption extends OnlyMultipleChoiceOptionRes {
+  valid: boolean
+}

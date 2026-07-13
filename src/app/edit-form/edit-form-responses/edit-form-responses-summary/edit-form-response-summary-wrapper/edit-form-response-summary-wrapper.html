@@ -1,11 +1,15 @@
 <mat-card appearance="raised" class="card-container">
   <mat-card-content class="card-content-container no-padding-card">
     <div class="response-info-container">
-      <p class="question">Heading</p>
-      <p class="response-count">10 responses</p>
+      <p class="question">{{ responseSummary().question }}</p>
+      <p class="response-count">{{ responseSummary().numberOfResponses }} responses</p>
     </div>
-    <div>
-      <ng-template #componentHost/>
-    </div>
+    @if (responseSummary().numberOfResponses === '0') {
+      <p class="no-response-text">No responses yet for this question.</p>
+    } @else {
+      <div>
+        <ng-template #componentHost/>
+      </div>
+    }
   </mat-card-content>
 </mat-card>

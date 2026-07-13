@@ -1,13 +1,18 @@
 import {Component, effect, inject, OnDestroy, OnInit, signal} from '@angular/core';
 import {EditFormQuestionComponent} from '../../../../type/edit-form-question-component';
-import {MultipleChoiceRes, OnlyMultipleChoiceRes} from '../../../../model/edit-form/question/response/multiple-choice-res';
+import {
+  MultipleChoiceRes,
+  OnlyMultipleChoiceRes
+} from '../../../../model/edit-form/question/response/multiple-choice-res';
 import {MatButton} from '@angular/material/button';
 import {EditFormMultipleChoiceOption} from './edit-form-multiple-choice-option/edit-form-multiple-choice-option';
 import {EditFormStateService} from '../../../../service/edit-form-state-service';
 import {MatDialog} from '@angular/material/dialog';
 import {SimpleDialog} from '../../../../shared/simple-dialog/simple-dialog';
 import {MultipleChoiceOption} from '../../../../type/multiple-choice-option';
-import {OnlyMultipleChoiceAddUpdateReq} from '../../../../model/edit-form/question/request/multiple-choice-add-update-req';
+import {
+  OnlyMultipleChoiceAddUpdateReq
+} from '../../../../model/edit-form/question/request/multiple-choice-add-update-req';
 
 @Component({
   selector: 'app-edit-form-multiple-choice',
@@ -26,16 +31,20 @@ export class EditFormMultipleChoice extends EditFormQuestionComponent<MultipleCh
   private dialog = inject(MatDialog)
 
   ngOnInit() {
-    this.options.update(() => {
-      return this.question().options.map((op) => {
-        return {id: crypto.randomUUID(), text: op, valid: !!op}
-      })
-    })
+    this.options.set(this.question().options
+      .sort((a, b) => a.orderIndex - b.orderIndex)
+      .map((op) => ({...op, valid: !!op.option}))
+    )
   }
 
   override getOnlyQuestionAddUpdateReq(): OnlyMultipleChoiceAddUpdateReq {
     return {
-      options: this.options().map(val => val.text)
+      options: this.options().map(val => {
+        return {
+          id: val.id.startsWith('NEW_') ? null : val.id,
+          option: val.option
+        }
+      })
     }
   }
 
@@ -48,7 +57,13 @@ export class EditFormMultipleChoice extends EditFormQuestionComponent<MultipleCh
       return
     }
     this.options.update(val => {
-      const option = {id: crypto.randomUUID(), text: `Option ${val.length + 1}`, valid: true}
+      const option = {
+        id: 'NEW_' + crypto.randomUUID(),
+        option: `Option ${val.length + 1}`,
+        valid: true,
+        orderIndex: val.length
+      }
+
       return [...val, option]
     })
 
@@ -67,8 +82,9 @@ export class EditFormMultipleChoice extends EditFormQuestionComponent<MultipleCh
 
   protected onOptionTextChange(option: MultipleChoiceOption) {
     this.options.update(val =>
-      val.map(v => v.id === option.id ? {...v, text: option.text} : v))
+      val.map(v => v.id === option.id ? {...v, option: option.option} : v))
 
+    this.emitCanSaveHasError()
     this.updateQuestion.emit(this.getOnlyQuestionAddUpdateReq())
   }
 

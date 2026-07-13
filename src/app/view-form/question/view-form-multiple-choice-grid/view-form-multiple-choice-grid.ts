@@ -7,7 +7,7 @@ import {MatRadioButton, MatRadioGroup} from '@angular/material/radio';
 import {MatButton} from '@angular/material/button';
 import {MatError} from '@angular/material/input';
 import {
-  OnlyMultipleChoiceGridResponsePutReq
+  OnlyMultipleChoiceGridResponsePutReq, OnlyMultipleChoiceGridRowResponsePutReq
 } from '../../../model/view-form/request/multiple-choice-grid-response-put-req';
 
 type Option = {
@@ -41,16 +41,16 @@ export class ViewFormMultipleChoiceGrid extends ViewFormQuestionComponent<Multip
       this.question().rows.map(r => {
         const option: Option = {
           row: {
-            value: crypto.randomUUID(),
-            label: r,
+            value: r.id,
+            label: r.row,
             control: new FormControl<string | null>(null)
           },
           columns: []
         }
         this.question().columns.forEach(c => {
           const column = {
-            value: crypto.randomUUID(),
-            label: c
+            value: c.id,
+            label: c.column
           }
           option.columns.push(column)
         })
@@ -68,17 +68,17 @@ export class ViewFormMultipleChoiceGrid extends ViewFormQuestionComponent<Multip
     super.ngOnInit();
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyMultipleChoiceGridResponsePutReq | null {
-    const indexes = this.options().map(op => {
-        const idx = op.columns
-          .findIndex(c => c.value === op.row.control.value)
+  override getOnlyQuestionResponsePutReq(): OnlyMultipleChoiceGridResponsePutReq {
 
-        return idx === -1 ? null : idx
-      }
-    )
+    const rows: OnlyMultipleChoiceGridRowResponsePutReq[] = this.options()
+      .map(op => {
+        return {
+          rowId: op.row.value,
+          responseColumnId: op.row.control.value
+        }
+      })
 
-    return !indexes.length || indexes.every(i => i === null) ?
-      null : {rows: indexes}
+    return {rows: rows}
   }
 
   protected onRadioButtonCLick(controlName: string, value: string) {

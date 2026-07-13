@@ -33,8 +33,9 @@ export class EditFormInfo implements OnInit, FocusableComponent {
 
   formRes = input.required<FormRes>()
 
-  componentId = signal(crypto.randomUUID())
+  componentId = signal<string>("form-info")
 
+  protected editFormStateService = inject(EditFormStateService)
   protected editFormService = inject(EditFormQuestionService)
   protected formStateService = inject(EditFormStateService)
 
@@ -63,6 +64,8 @@ export class EditFormInfo implements OnInit, FocusableComponent {
         stopAcceptingResponseOn: new Date(this.formRes().stopAcceptingResponseOn)
       })
     })
+
+    this.editFormStateService.changeFocus(this.componentId())
   }
 
 }

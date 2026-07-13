@@ -1,5 +1,5 @@
 <form [formGroup]="formGroup">
-  <p>{{ option().orderNumber }}.</p>
+  <p>{{ option().orderIndex + 1 }}.</p>
   <mat-form-field subscriptSizing="dynamic" class="decorated-mat-input form-field">
     <input matInput formControlName="option" (focus)="formStateService.changeFocus(parentComponentId())">
   </mat-form-field>

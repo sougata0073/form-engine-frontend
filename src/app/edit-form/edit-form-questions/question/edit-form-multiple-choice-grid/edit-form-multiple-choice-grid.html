@@ -9,7 +9,7 @@
               [parentComponentId]="parentComponentId()"
               [option]="row"
               (remove)="removeRow(row.id)"
-              [disableRemove]="formStateService.isFocused(parentComponentId())"
+              [disableRemove]="!formStateService.isFocused(parentComponentId())"
               (optionTextChange)="onRowTextChange($event)"
               (canSaveQuestion)="onRowCanSaveChange(row.id, $event)"
             />
@@ -45,7 +45,7 @@
           <th class="column-label"></th>
 
           @for (column of columns(); track column.id) {
-            <th class="column-label">{{ column.text }}</th>
+            <th class="column-label">{{ column.option }}</th>
           }
         </tr>
         </thead>
@@ -53,11 +53,11 @@
       <tbody>
         @for (row of rows(); track row.id) {
           <tr>
-            <td class="row-label">{{ row.text }}</td>
+            <td class="row-label">{{ row.option }}</td>
             <td [attr.colspan]="columns().length">
               <mat-radio-group class="radio-group">
                 @for (column of columns(); track column.id) {
-                  <mat-radio-button [value]="column.text" class="radio-item" disabled/>
+                  <mat-radio-button [value]="column.option" class="radio-item" disabled/>
                 }
               </mat-radio-group>
             </td>

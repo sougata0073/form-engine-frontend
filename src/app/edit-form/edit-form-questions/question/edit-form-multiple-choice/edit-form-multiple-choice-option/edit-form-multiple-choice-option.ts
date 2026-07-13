@@ -40,12 +40,12 @@ export class EditFormMultipleChoiceOption implements OnInit {
   ngOnInit() {
 
     this.formGroup.patchValue({
-      option: this.option().text
+      option: this.option().option
     })
 
     this.formGroup.valueChanges.subscribe(val => {
       this.canSaveQuestion.emit(this.formGroup.valid)
-      this.optionTextChange.emit({...this.option(), text: val.option!})
+      this.optionTextChange.emit({...this.option(), option: val.option!})
     })
 
   }

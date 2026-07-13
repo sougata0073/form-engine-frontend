@@ -22,6 +22,7 @@ import {MatTimepicker, MatTimepickerInput, MatTimepickerToggle} from '@angular/m
 import {provideNativeDateAdapter} from '@angular/material/core';
 import {MatCard} from '@angular/material/card';
 import {FormInfoRes} from '../../model/form/form-info-res';
+import {ObjectUtil} from '../../util/object-util';
 
 @Component({
   selector: 'app-stop-accepting-response-dialog',
@@ -61,7 +62,7 @@ export class StopAcceptingResponseDialog implements OnInit, OnDestroy {
   protected editFormService = inject(EditFormQuestionService)
   protected dialogRef = inject(MatDialogRef<StopAcceptingResponseDialog>)
 
-  protected formInfo = inject<FormInfoRes>(MAT_DIALOG_DATA)
+  protected formInfo = this.editFormService.formInfo
 
   protected selectedDate = model<Date | null>(null)
 
@@ -90,22 +91,22 @@ export class StopAcceptingResponseDialog implements OnInit, OnDestroy {
   ngOnInit() {
     let radioGroupValue: 'date' | 'response-limit' | null = null;
 
-    if (this.formInfo.stopAcceptingResponseOn === null &&
-      this.formInfo.stopAcceptingResponseAfterResponse === null) {
+    if (this.formInfo()!.stopAcceptingResponseOn === null &&
+      this.formInfo()!.stopAcceptingResponseAfterResponse === null) {
       radioGroupValue = 'date'
-    } else if (this.formInfo.stopAcceptingResponseOn) {
+    } else if (this.formInfo()!.stopAcceptingResponseOn) {
       radioGroupValue = 'date'
-    } else if (this.formInfo.stopAcceptingResponseAfterResponse >= 0) {
+    } else if (this.formInfo()!.stopAcceptingResponseAfterResponse >= 0) {
       radioGroupValue = 'response-limit'
     }
 
     this.formGroup.patchValue({
       radioGroup: radioGroupValue,
-      responseLimit: this.formInfo.stopAcceptingResponseAfterResponse,
-      notAcceptingResponseMessage: this.formInfo.notAcceptingResponseMessage
+      responseLimit: this.formInfo()!.stopAcceptingResponseAfterResponse,
+      notAcceptingResponseMessage: this.formInfo()!.notAcceptingResponseMessage
     })
 
-    this.selectedDateTime.set(new Date(this.formInfo.stopAcceptingResponseOn))
+    this.selectedDateTime.set(!!this.formInfo()!.stopAcceptingResponseOn ? new Date(this.formInfo()!.stopAcceptingResponseOn) : null)
 
     this.formGroup.valueChanges.subscribe(() => this.setCanSave())
   }
@@ -136,7 +137,7 @@ export class StopAcceptingResponseDialog implements OnInit, OnDestroy {
   protected onSaveClick() {
     if (!this.canSave()) return
 
-    const prevForm = this.formInfo
+    const prevForm = this.formInfo()!
 
     this.editFormService.updateFormInfo({
       acceptingResponse: true,
@@ -151,16 +152,22 @@ export class StopAcceptingResponseDialog implements OnInit, OnDestroy {
           this.selectedDateTime() : null,
       name: prevForm.name,
       title: prevForm.title
-    }, res => this.dialogRef.close(res))
+    }, () => this.dialogRef.close())
   }
 
   protected setCanSave() {
-    const canSave = !!this.selectedDateTime() ||
+    const isSame = ObjectUtil.areMatchingFieldsSame(this.formInfo()!, {
+      notAcceptingResponseMessage: this.formGroup.value.notAcceptingResponseMessage,
+      stopAcceptingResponseOn: this.selectedDateTime(),
+      stopAcceptingResponseAfterResponse: this.formGroup.value.responseLimit
+    })
+
+    const formValid = !!this.selectedDateTime() ||
       (
         this.formGroup.controls.radioGroup.value === 'response-limit' &&
         this.formGroup.controls.responseLimit.valid
       )
 
-    this.canSave.set(canSave)
+    this.canSave.set(!isSame && formValid)
   }
 }

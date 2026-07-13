@@ -1,26 +1,29 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
-  ChartComponent,
+  ApexAnnotations,
   ApexAxisChartSeries,
-  ApexNonAxisChartSeries,
   ApexChart,
-  ApexXAxis,
-  ApexYAxis,
-  ApexTitleSubtitle,
   ApexDataLabels,
-  ApexStroke,
   ApexFill,
+  ApexGrid,
   ApexLegend,
-  ApexTooltip,
   ApexMarkers,
+  ApexNonAxisChartSeries,
   ApexPlotOptions,
   ApexResponsive,
-  ApexGrid,
-  ApexAnnotations,
   ApexStates,
+  ApexStroke,
   ApexTheme,
+  ApexTitleSubtitle,
+  ApexTooltip,
+  ApexXAxis,
+  ApexYAxis,
   NgApexchartsModule,
 } from 'ng-apexcharts';
+import {EditFormResponseSummaryComponent} from '../../../../../type/edit-form-response-summary-component';
+import {
+  MultipleChoiceResponseSummaryRes
+} from '../../../../../model/edit-form/responses/summary/multiple-choice-response-summary-res';
 
 type ChartOptions = {
   series?: ApexAxisChartSeries | ApexNonAxisChartSeries;
@@ -51,28 +54,32 @@ type ChartOptions = {
   templateUrl: './edit-form-response-summary-multiple-choice.html',
   styleUrl: './edit-form-response-summary-multiple-choice.scss',
 })
-export class EditFormResponseSummaryMultipleChoice {
+export class EditFormResponseSummaryMultipleChoice extends EditFormResponseSummaryComponent<MultipleChoiceResponseSummaryRes> implements OnInit {
 
-  public chartOptions: Partial<ChartOptions> = {
-    series: [44, 55, 13, 43, 22],
-    chart: {
-      width: 380,
-      type: 'pie',
-    },
-    labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          chart: {
-            width: 200,
-          },
-          legend: {
-            position: 'bottom',
+  public chartOptions: Partial<ChartOptions> | null = null
+
+  ngOnInit() {
+    this.chartOptions = {
+      series: this.responseSummary().responses.map(r => +r.responseCount),
+      chart: {
+        width: 380,
+        type: 'pie',
+      },
+      labels: this.responseSummary().responses.map(r => r.option),
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200,
+            },
+            legend: {
+              position: 'bottom',
+            },
           },
         },
-      },
-    ],
-  };
+      ],
+    };
+  }
 
 }

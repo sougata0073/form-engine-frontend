@@ -1,1 +1,7 @@
-<p>edit-form-response-summary-file-upload works!</p>
+<div class="parent-container">
+  @for (file of responseSummary().responses; track file.fileUrl) {
+    <div class="file-name-container">
+      <p class="file-name" [matTooltip]="file.fileName">{{ file.fileName }}</p>
+    </div>
+  }
+</div>

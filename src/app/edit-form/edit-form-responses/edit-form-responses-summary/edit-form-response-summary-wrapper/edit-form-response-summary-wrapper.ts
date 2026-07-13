@@ -1,7 +1,7 @@
 import {Component, inject, input, OnInit, viewChild, ViewContainerRef} from '@angular/core';
 import {FormResponseSummaryComponentFactory} from '../../../../service/form-response-summary-component-factory';
 import {MatCard, MatCardContent} from '@angular/material/card';
-import {QuestionType} from '../../../../type/question-type';
+import {AnyResponseSummaryRes} from '../../../../type/any-response-summary-res';
 
 @Component({
   selector: 'app-edit-form-response-summary-wrapper',
@@ -14,15 +14,17 @@ import {QuestionType} from '../../../../type/question-type';
 })
 export class EditFormResponseSummaryWrapper implements OnInit {
 
-  questionType = input.required<QuestionType>()
+  responseSummary = input.required<AnyResponseSummaryRes>()
 
   private componentHost = viewChild('componentHost', {read: ViewContainerRef})
 
   private componentFactory = inject(FormResponseSummaryComponentFactory);
 
   ngOnInit() {
-    this.componentFactory.getComponent(this.questionType()).then(componentClass => {
-      this.componentHost()?.createComponent(componentClass);
+    this.componentFactory.getComponent(this.responseSummary().questionType).then(componentClass => {
+      const compRef = this.componentHost()?.createComponent(componentClass);
+
+      compRef?.setInput('responseSummary', this.responseSummary());
     })
   }
 

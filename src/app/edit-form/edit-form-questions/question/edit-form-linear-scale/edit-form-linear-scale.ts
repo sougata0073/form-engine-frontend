@@ -52,6 +52,8 @@ export class EditFormLinearScale extends EditFormQuestionComponent<LinearScaleRe
 
     this.formGroup.valueChanges.subscribe(val => {
       this.previewNumbers.update(() => ArrayUtil.fillByNumbers(val.fromNumber ?? 0, val.toNumber ?? 0))
+
+      this.emitCanSaveHasError()
       this.updateQuestion.emit(this.getOnlyQuestionAddUpdateReq())
     })
     this.formGroup.statusChanges.subscribe(() => this.emitCanSaveHasError())

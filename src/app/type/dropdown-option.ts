@@ -1,1 +1,5 @@
-export type DropdownOption = { id: string, orderNumber: number, text: string, valid: boolean }
+import {OnlyDropdownOptionRes} from '../model/edit-form/question/response/dropdown-res';
+
+export interface DropdownOption extends OnlyDropdownOptionRes {
+  valid: boolean
+}

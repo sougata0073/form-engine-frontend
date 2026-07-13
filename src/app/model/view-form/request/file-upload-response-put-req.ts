@@ -1,9 +1,10 @@
 import {QuestionResponsePutReq} from './question-response-put-req';
 
 export interface OnlyFileUploadResponsePutReq {
-  fileUrl: string,
-  fileMimeType: string,
-  fileSize: number
+  fileName: string | null,
+  fileUrl: string | null,
+  fileMimeType: string | null,
+  fileSize: number | null
 }
 
 export interface FileUploadResponsePutReq extends QuestionResponsePutReq, OnlyFileUploadResponsePutReq {

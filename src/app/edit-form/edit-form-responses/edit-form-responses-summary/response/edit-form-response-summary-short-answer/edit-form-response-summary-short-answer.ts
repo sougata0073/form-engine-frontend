@@ -1,4 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, OnInit, signal} from '@angular/core';
+import {
+  ShortAnswerResponseSummaryRes
+} from '../../../../../model/edit-form/responses/summary/short-answer-response-summary-res';
+import {EditFormResponseSummaryComponent} from '../../../../../type/edit-form-response-summary-component';
 
 @Component({
   selector: 'app-edit-form-response-summary-short-answer',
@@ -6,11 +10,12 @@ import {Component} from '@angular/core';
   templateUrl: './edit-form-response-summary-short-answer.html',
   styleUrl: './edit-form-response-summary-short-answer.scss',
 })
-export class EditFormResponseSummaryShortAnswer {
+export class EditFormResponseSummaryShortAnswer extends EditFormResponseSummaryComponent<ShortAnswerResponseSummaryRes> implements OnInit {
 
-  protected responses = [
-    'Response 1', 'Response 2', 'Response 3', 'Response 4', 'Response 5', 'Response 6', 'Response 7', 'Response 8', 'Response 9', 'Response 10',
-    'Response 11', "Response 12", "Response 13", "Response 14", "Response 15", "Response 16", "Response 17", "Response 18", "Response 19", "Response 20",
-  ]
+  protected responses = signal<string[]>([])
+
+  ngOnInit() {
+    this.responses.set(this.responseSummary().responses)
+  }
 
 }

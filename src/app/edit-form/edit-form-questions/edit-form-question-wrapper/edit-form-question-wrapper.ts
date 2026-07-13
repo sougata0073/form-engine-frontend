@@ -58,7 +58,8 @@ import {DefaultQuestionAddUpdateReq} from '../../../constant/default-question-ad
   styleUrl: './edit-form-question-wrapper.scss',
 })
 export class EditFormQuestionWrapper implements OnInit, AfterViewInit, OnDestroy {
-  componentId = signal(crypto.randomUUID())
+
+  componentId = signal<string>(crypto.randomUUID())
 
   question = input.required<AnyQuestionRes>()
   orderIndex = input.required<number>()
@@ -79,6 +80,8 @@ export class EditFormQuestionWrapper implements OnInit, AfterViewInit, OnDestroy
   protected editFormService = inject(EditFormQuestionService)
   private componentFactory = inject(EditFormQuestionComponentFactory)
 
+  protected formRes = this.editFormService.formRes
+
   protected formGroup = new FormGroup({
     question: new FormControl<string | null>(null),
     description: new FormControl<string | null>(null),
@@ -92,6 +95,9 @@ export class EditFormQuestionWrapper implements OnInit, AfterViewInit, OnDestroy
   })
 
   ngOnInit() {
+
+    this.componentId.set(this.question().id)
+
     this.formGroup.patchValue({
       question: this.question().question,
       description: this.question().description,
@@ -177,8 +183,24 @@ export class EditFormQuestionWrapper implements OnInit, AfterViewInit, OnDestroy
 
     this.editFormStateService.isFormGettingModified.set(true)
 
-    this.editFormService.deleteQuestion(this.question().id, this.question().questionType, () => {
+    const deleteId = this.question().id
+    const questions = this.formRes()?.questions ?? []
+
+    const deleteQuestionIndex = questions.findIndex(q => q.id === deleteId)
+    let nearestQuestionIndex = deleteQuestionIndex === questions.length - 1 ?
+      deleteQuestionIndex - 1 : deleteQuestionIndex + 1
+
+    this.editFormService.deleteQuestion(deleteId, this.question().questionType, () => {
       this.editFormStateService.isFormGettingModified.set(false)
+
+      if (questions.length === 1) {
+        this.editFormStateService.changeFocus("form-info")
+      } else {
+        const id = questions.at(nearestQuestionIndex)?.id
+        if (id) {
+          this.editFormStateService.changeFocus(id)
+        }
+      }
     })
   }
 

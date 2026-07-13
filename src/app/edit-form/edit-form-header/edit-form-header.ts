@@ -64,17 +64,19 @@ export class EditFormHeader implements OnInit {
   private activatedRoute = inject(ActivatedRoute)
   private dialog = inject(MatDialog)
 
-  protected formInfo = signal<FormInfoRes | null>(null)
+  protected formInfo = this.editFormService.formInfo
   protected authJwtData = signal(this.authService.getJwtData())
 
   ngOnInit() {
 
-    this.editFormService.loadFormInfo(this.formId()).subscribe(res => {
-      this.formInfo.set(res)
-
+    this.editFormService.loadFormInfo(this.formId(), () => {
       this.activatedRoute.queryParams.subscribe(val => {
-        if (val['publishedOptions'] && this.formInfo()!.published) {
-          this.openPublishedOptionsDialog()
+        if (val['publishedOptions']) {
+          if (this.formInfo()?.published) {
+            this.openPublishedOptionsDialog()
+          } else {
+            this.openPublishFormDialog()
+          }
         }
       })
     })
@@ -110,8 +112,11 @@ export class EditFormHeader implements OnInit {
   }
 
   protected onPublishClick() {
+    this.openPublishFormDialog()
+  }
+
+  protected openPublishFormDialog() {
     this.dialog.open(PublishFormDialog, {data: this.formInfo()}).afterClosed().subscribe((res: FormInfoRes) => {
-      this.formInfo.set(res)
       if (res.published) {
         this.copyResponderLinkButton()?.openMenu()
       }
@@ -121,7 +126,7 @@ export class EditFormHeader implements OnInit {
   protected openPublishedOptionsDialog() {
     this.dialog.open(PublishedOptionsDialog, {
       data: this.formInfo()
-    }).afterClosed().subscribe((res: FormInfoRes) => this.formInfo.set(res))
+    })
   }
 
   protected onPrintClick(moreMenuTrigger: MatMenuTrigger) {
@@ -145,17 +150,16 @@ export class EditFormHeader implements OnInit {
         () => {
           const prevForm = this.formInfo()!
           this.editFormService.updateFormInfo({
-            acceptingResponse: prevForm.acceptingResponse,
+            acceptingResponse: false,
             description: prevForm.description,
             notAcceptingResponseMessage: prevForm.notAcceptingResponseMessage,
             published: false,
-            stopAcceptingResponseAfterResponse: prevForm.stopAcceptingResponseAfterResponse,
-            stopAcceptingResponseOn: new Date(prevForm.stopAcceptingResponseOn),
+            stopAcceptingResponseAfterResponse: null,
+            stopAcceptingResponseOn: null,
             title: prevForm.title,
             name: prevForm.name
-          }, res => {
+          }, () => {
             dialogRef.close()
-            this.formInfo.set(res)
           })
         }
       )

@@ -1,7 +1,7 @@
 import {QuestionResponsePutReq} from './question-response-put-req';
 
 export interface OnlyMultipleChoiceResponsePutReq {
-  responseIndex: number
+  responseOptionId: string | null
 }
 
 export interface MultipleChoiceResponsePutReq extends QuestionResponsePutReq, OnlyMultipleChoiceResponsePutReq {

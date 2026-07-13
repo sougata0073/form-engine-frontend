@@ -61,6 +61,7 @@ export class EditFormFileUpload extends EditFormQuestionComponent<FileUploadRes,
     this.emitCanSaveHasError()
 
     this.formGroup.valueChanges.subscribe(val => {
+      this.emitCanSaveHasError()
       this.updateQuestion.emit(this.getOnlyQuestionAddUpdateReq())
     })
     this.formGroup.statusChanges.subscribe(() => this.emitCanSaveHasError())
@@ -76,6 +77,7 @@ export class EditFormFileUpload extends EditFormQuestionComponent<FileUploadRes,
   protected onShowFileCategoriesCheckChange(checked: boolean) {
     if (!checked) {
       if (this.selectedFileTypes().length !== 0) {
+        this.emitCanSaveHasError()
         this.updateQuestion.emit(this.getOnlyQuestionAddUpdateReq())
       }
       this.selectedFileTypes.set([])
@@ -91,6 +93,7 @@ export class EditFormFileUpload extends EditFormQuestionComponent<FileUploadRes,
         return [...prev.filter(ft => ft.category !== fileType.category)]
       }
     })
+    this.emitCanSaveHasError()
     this.updateQuestion.emit(this.getOnlyQuestionAddUpdateReq())
   }
 

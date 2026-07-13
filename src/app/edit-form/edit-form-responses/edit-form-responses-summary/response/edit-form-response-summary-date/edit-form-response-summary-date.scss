@@ -1,0 +1,15 @@
+@use '@angular/material' as mat;
+
+.parent-container {
+  max-height: 520px;
+  overflow-y: auto;
+
+  .date-tree {
+    @include mat.tree-overrides((
+      container-background-color: transparent,
+      node-text-color: black,
+      node-text-size: 14px,
+      node-text-weight: 500
+    ));
+  }
+}

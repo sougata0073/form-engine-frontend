@@ -6,8 +6,8 @@
         <tr>
           <th class="column-label"></th>
 
-          @for (column of question().columns; track $index) {
-            <th class="column-label">{{ column }}</th>
+          @for (column of question().columns; track column.id) {
+            <th class="column-label">{{ column.column }}</th>
           }
         </tr>
         </thead>

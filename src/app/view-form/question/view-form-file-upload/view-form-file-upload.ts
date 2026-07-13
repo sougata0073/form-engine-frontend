@@ -45,12 +45,13 @@ export class ViewFormFileUpload extends ViewFormQuestionComponent<FileUploadRes,
     )
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyFileUploadResponsePutReq | null {
-    const fileName = this.formGroup.value.file
-    return !fileName ? null : {
+  override getOnlyQuestionResponsePutReq(): OnlyFileUploadResponsePutReq {
+    const fileName = this.formGroup.value.file ?? null
+    return {
+      fileName: fileName,
       fileUrl: fileName,
-      fileSize: this.selectedFile!.size,
-      fileMimeType: this.selectedFile!.type
+      fileSize: this.selectedFile?.size ?? null,
+      fileMimeType: this.selectedFile?.type ?? null
     }
   }
 

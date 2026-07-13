@@ -1,26 +1,29 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
-  ChartComponent,
+  ApexAnnotations,
   ApexAxisChartSeries,
-  ApexNonAxisChartSeries,
   ApexChart,
-  ApexXAxis,
-  ApexYAxis,
-  ApexTitleSubtitle,
   ApexDataLabels,
-  ApexStroke,
   ApexFill,
+  ApexGrid,
   ApexLegend,
-  ApexTooltip,
   ApexMarkers,
+  ApexNonAxisChartSeries,
   ApexPlotOptions,
   ApexResponsive,
-  ApexGrid,
-  ApexAnnotations,
   ApexStates,
+  ApexStroke,
   ApexTheme,
-  NgApexchartsModule,
+  ApexTitleSubtitle,
+  ApexTooltip,
+  ApexXAxis,
+  ApexYAxis,
+  ChartComponent,
 } from 'ng-apexcharts';
+import {EditFormResponseSummaryComponent} from '../../../../../type/edit-form-response-summary-component';
+import {
+  TickBoxGridResponseSummaryRes
+} from '../../../../../model/edit-form/responses/summary/tick-box-grid-response-summary-res';
 
 export type ChartOptions = {
   series?: ApexAxisChartSeries | ApexNonAxisChartSeries;
@@ -47,77 +50,91 @@ export type ChartOptions = {
 
 @Component({
   selector: 'app-edit-form-response-summary-tick-box-grid',
-  imports: [
-    ChartComponent
-  ],
+  imports: [ChartComponent],
   templateUrl: './edit-form-response-summary-tick-box-grid.html',
   styleUrl: './edit-form-response-summary-tick-box-grid.scss',
 })
-export class EditFormResponseSummaryTickBoxGrid {
-  public chartOptions: Partial<ChartOptions> = {
-    series: [
-      {
-        name: 'Net Profit',
-        data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+export class EditFormResponseSummaryTickBoxGrid
+  extends EditFormResponseSummaryComponent<TickBoxGridResponseSummaryRes>
+  implements OnInit {
+
+  public chartOptions: Partial<ChartOptions> | null = null;
+
+  ngOnInit(): void {
+
+    const rows = this.responseSummary().responses;
+
+    const series: ApexAxisChartSeries = rows.length
+      ? rows[0].responses.map(column => ({
+        name: column.column,
+        data: rows.map(row =>
+          Number(
+            row.responses.find(r => r.columnId === column.columnId)?.responseCount ?? 0
+          )
+        )
+      }))
+      : [];
+
+    this.chartOptions = {
+      series,
+
+      chart: {
+        type: 'bar',
+        height: 450,
+        toolbar: {
+          show: true
+        }
       },
-      {
-        name: 'Revenue',
-        data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
+
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '60%',
+          borderRadius: 4,
+          borderRadiusApplication: 'end'
+        }
       },
-      {
-        name: 'Free Cash Flow',
-        data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
+
+      dataLabels: {
+        enabled: false
       },
-      {
-        name: 'Net Profit',
-        data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+
+      stroke: {
+        show: true,
+        width: 1,
+        colors: ['transparent']
       },
-      {
-        name: 'Revenue',
-        data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
+
+      fill: {
+        opacity: 1
       },
-      {
-        name: 'Free Cash Flow',
-        data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
+
+      xaxis: {
+        categories: rows.map(r => r.row)
       },
-    ],
-    chart: {
-      type: 'bar',
-      height: 350,
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        columnWidth: '55%',
-        borderRadius: 5,
-        borderRadiusApplication: 'end',
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ['transparent'],
-    },
-    xaxis: {
-      categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-    },
-    yaxis: {
-      title: {
-        text: '$ (thousands)',
-      },
-    },
-    fill: {
-      opacity: 1,
-    },
-    tooltip: {
-      y: {
-        formatter: (val) => {
-          return '$ ' + val + ' thousands'
+
+      yaxis: {
+        title: {
+          text: 'Selections'
         },
+        min: 0,
+        forceNiceScale: true,
       },
-    },
-  };
+
+      legend: {
+        position: 'top',
+        horizontalAlign: 'center'
+      },
+
+      tooltip: {
+        enabled: false,
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: (value: number) =>
+            `${value} selection${value === 1 ? '' : 's'}`
+        }
+      }
+    }
+  }
 }

@@ -32,22 +32,22 @@ export class PublishFormDialog {
   protected editFormService = inject(EditFormQuestionService)
   protected dialogRef = inject(MatDialogRef<PublishFormDialog>)
 
-  protected formInfo = inject<FormInfoRes>(MAT_DIALOG_DATA)
+  protected formInfo = this.editFormService.formInfo
 
   protected onPublishClick() {
-    const prevForm = this.formInfo
+    const prevForm = this.formInfo()!
 
     this.editFormService.updateFormInfo({
       name: prevForm.name,
       title: prevForm.title,
       description: prevForm.description,
-      acceptingResponse: prevForm.acceptingResponse,
+      acceptingResponse: true,
       notAcceptingResponseMessage: prevForm.notAcceptingResponseMessage,
       published: true,
-      stopAcceptingResponseOn: new Date(prevForm.stopAcceptingResponseOn),
-      stopAcceptingResponseAfterResponse: prevForm.stopAcceptingResponseAfterResponse
-    }, (res) => {
-      this.dialogRef.close(res)
+      stopAcceptingResponseOn: null,
+      stopAcceptingResponseAfterResponse: null
+    }, () => {
+      this.dialogRef.close()
     })
   }
 

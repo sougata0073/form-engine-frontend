@@ -73,6 +73,18 @@
 
           <p class="message">{{ formError()?.message }}</p>
         </div>
+      }@else if (formError()?.reason === 'RESPONSE_ALREADY_SUBMITTED') {
+        <div class="response-already-submitted-message-container">
+          <app-question-card [isTopItem]="true">
+            <div class="response-already-submitted-content-container">
+              <p class="form-title">{{ formError()!.formTitle }}</p>
+              <p>{{ formError()!.message }}</p>
+            </div>
+          </app-question-card>
+
+          <app-view-form-footer/>
+
+        </div>
       } @else {
         <div class="loader-container">
           <mat-spinner/>

@@ -40,15 +40,20 @@ export class EditFormDropdown extends EditFormQuestionComponent<DropdownRes, Onl
 
   ngOnInit() {
     this.options.update(() => {
-      return this.question().options.map((op, index) => {
-        return {id: crypto.randomUUID(), orderNumber: index + 1, text: op, valid: !!op}
-      })
+      return this.question().options
+        .sort((a, b) => a.orderIndex - b.orderIndex)
+        .map((op, index) => ({...op, valid: !!op.option}))
     })
   }
 
   override getOnlyQuestionAddUpdateReq(): OnlyDropdownAddUpdateReq {
     return {
-      options: this.options().map(val => val.text)
+      options: this.options().map(val => {
+        return {
+          id: val.id.startsWith('NEW_') ? null : val.id,
+          option: val.option
+        }
+      })
     }
   }
 
@@ -61,9 +66,9 @@ export class EditFormDropdown extends EditFormQuestionComponent<DropdownRes, Onl
       return
     }
     this.options.update(val => [...val, {
-      id: crypto.randomUUID(),
-      orderNumber: val.length + 1,
-      text: `Option ${val.length + 1}`,
+      id: 'NEW_' + crypto.randomUUID(),
+      orderIndex: val.length,
+      option: `Option ${val.length + 1}`,
       valid: true
     }])
     this.emitCanSaveHasError()
@@ -75,7 +80,7 @@ export class EditFormDropdown extends EditFormQuestionComponent<DropdownRes, Onl
         const newArray = val
           .filter(v => v.id !== optionId)
           .map((v, index) => {
-            return {...v, orderNumber: index + 1}
+            return {...v, orderIndex: index}
           })
 
         return [...newArray]
@@ -87,7 +92,8 @@ export class EditFormDropdown extends EditFormQuestionComponent<DropdownRes, Onl
 
   protected onOptionTextChange(option: DropdownOption) {
     this.options.update(val =>
-      val.map(v => v.id === option.id ? {...v, text: option.text} : v))
+      val.map(v => v.id === option.id ? {...v, option: option.option} : v))
+    this.emitCanSaveHasError()
     this.updateQuestion.emit(this.getOnlyQuestionAddUpdateReq())
   }
 

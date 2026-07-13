@@ -31,16 +31,17 @@ export class ViewFormMultipleChoice extends ViewFormQuestionComponent<MultipleCh
 
     this.options.set(
       this.question().options.map(op => {
-        return {value: crypto.randomUUID(), label: op}
+        return {value: op.id, label: op.option}
       })
     )
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyMultipleChoiceResponsePutReq | null {
-    const index = this.options()
-      .findIndex(op => op.value === this.formGroup.value.multipleChoice)
+  override getOnlyQuestionResponsePutReq(): OnlyMultipleChoiceResponsePutReq {
+    const id = this.formGroup.value.multipleChoice
 
-    return index === -1 ? null : {responseIndex: index}
+    return {
+      responseOptionId: id ?? null
+    }
   }
 
   protected onRadioButtonCLick(value: string) {

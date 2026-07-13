@@ -74,9 +74,9 @@ export class ViewFormParagraph
     }
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyParagraphResponsePutReq | null {
+  override getOnlyQuestionResponsePutReq(): OnlyParagraphResponsePutReq {
     const value = this.formGroup.value.paragraph
-    return !value ? null : {text: value}
+    return {text: value ?? null}
   }
 
   private getFormValidator(): ValidatorFn | null {

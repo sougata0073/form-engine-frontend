@@ -4,7 +4,7 @@ import {DurationRes} from '../../../model/edit-form/question/response/duration-r
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatError, MatFormField, MatInput, MatLabel} from '@angular/material/input';
 import {OnlyDurationResponsePutReq} from '../../../model/view-form/request/duration-response-put-req';
-import {every} from 'rxjs';
+import {isNumber} from 'lodash';
 
 @Component({
   selector: 'app-view-form-duration',
@@ -26,18 +26,18 @@ export class ViewFormDuration extends ViewFormQuestionComponent<DurationRes, Onl
     seconds: new FormControl<number | null>(null)
   })
 
-  override getOnlyQuestionResponsePutReq(): OnlyDurationResponsePutReq | null {
+  override getOnlyQuestionResponsePutReq(): OnlyDurationResponsePutReq {
     const values = this.formGroup.value
     const h = values.hours
     const m = values.minutes
     const s = values.seconds
 
-    if (h === null && m === null && s === null) return null
+    const hasAnyValue = isNumber(h) || isNumber(m) || isNumber(s);
 
     return {
-      hours: h ?? 0,
-      minutes: m ?? 0,
-      seconds: s ?? 0
+      hours: hasAnyValue ? h ?? 0 : null,
+      minutes: hasAnyValue ? m ?? 0 : null,
+      seconds: hasAnyValue ? s ?? 0 : null
     }
   }
 }

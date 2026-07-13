@@ -30,18 +30,19 @@
             >
               @for (q of questionSummaries()?.questions; track q.id) {
                 <mat-option [value]="q.id">
-                  {{ q.question }}
+                  {{ q.question === null ? `Question ${$index + 1}` : q.question }}
                 </mat-option>
               }
             </mat-select>
           </mat-form-field>
         </form>
-        <mat-paginator #paginator class="decorated-paginator"
+        <mat-paginator #questionPaginator class="decorated-paginator"
                        [length]="questionSummaries()?.questions?.length ?? 0"
                        [pageSize]="1"
                        [showFirstLastButtons]="false"
                        [hidePageSize]="true"
-                       [pageIndex]="0">
+                       [pageIndex]="questionPaginatorPageIndex()"
+                       (page)="handleQuestionPaginatorPageEvent($event)">
         </mat-paginator>
       </div>
     } @else if (activatedLink() === 'individual') {

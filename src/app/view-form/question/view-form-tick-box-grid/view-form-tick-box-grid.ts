@@ -8,7 +8,10 @@ import {MatCheckbox} from '@angular/material/checkbox';
 import {ValueLabelPair} from '../../../type/value-label-pair';
 import {FormArrayValidator} from '../../../formValidator/form-array-validator';
 import {MatError} from '@angular/material/input';
-import {OnlyTickBoxGridResponsePutReq} from '../../../model/view-form/request/tick-box-grid-response-put-req';
+import {
+  OnlyTickBoxGridResponsePutReq,
+  OnlyTickBoxGridRowResponsePutReq
+} from '../../../model/view-form/request/tick-box-grid-response-put-req';
 
 type Option = {
   row: ValueLabelPair & { formArray: FormArray<FormControl<boolean | null>> },
@@ -42,16 +45,16 @@ export class ViewFormTickBoxGrid extends ViewFormQuestionComponent<TickBoxGridRe
       this.question().rows.map(r => {
         const option: Option = {
           row: {
-            value: crypto.randomUUID(),
-            label: r,
+            value: r.id,
+            label: r.row,
             formArray: new FormArray<FormControl<boolean | null>>([])
           },
           columns: []
         }
         this.question().columns.forEach(c => {
           const column = {
-            value: crypto.randomUUID(),
-            label: c,
+            value: c.id,
+            label: c.column,
             control: new FormControl<boolean | null>(null)
           }
           option.row.formArray.push(column.control)
@@ -75,13 +78,18 @@ export class ViewFormTickBoxGrid extends ViewFormQuestionComponent<TickBoxGridRe
     })
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyTickBoxGridResponsePutReq | null {
-    const indexes = this.options().map(op =>
-      op.columns
-        .map((op, idx) => op.control.value ? idx : null)
-        .filter(idx => idx !== null)
-    )
-    return !indexes.length || indexes.every(i => !i.length) ? null : {rows: indexes}
+  override getOnlyQuestionResponsePutReq(): OnlyTickBoxGridResponsePutReq {
+    const rows: OnlyTickBoxGridRowResponsePutReq[] = this.options()
+      .map(op => {
+        return {
+          rowId: op.row.value,
+          responseColumnIds: op.columns
+            .filter(c => c.control.value)
+            .map(c => c.value)
+        }
+      })
+
+    return {rows: rows}
   }
 
   override clearForm() {

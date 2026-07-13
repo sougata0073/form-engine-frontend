@@ -1,1 +1,29 @@
-<p>edit-form-response-summary-duration works!</p>
+<div class="parent-container">
+  @for (duration of durations(); track duration.id) {
+    <div class="time-container">
+
+      <div class="hour-container">
+        <p class="hour">{{ duration.hours }}</p>
+        <p class="colon">:</p>
+        <div class="blank-space"></div>
+        <p class="colon">:</p>
+        <div class="blank-space"></div>
+      </div>
+
+      <div class="duration-container">
+        @for (d of duration.durations; track d.id) {
+          @if (d.occurrence > 1) {
+            <div class="duration-multiple">
+              <p class="duration-value">{{ `${d.hours}:${d.minutes}:${d.seconds}` }}</p>
+              <p class="duration-number">{{ d.occurrence }}</p>
+            </div>
+          } @else {
+            <p class="duration">{{ `${d.hours}:${d.minutes}:${d.seconds}` }}</p>
+          }
+        }
+      </div>
+
+    </div>
+  }
+
+</div>

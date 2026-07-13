@@ -49,14 +49,13 @@ export class ViewForm implements OnInit, OnDestroy {
   protected dialog = inject(MatDialog)
   protected title = inject(Title)
 
-  protected formRes = signal<FormRes | null>(null)
+  protected formRes = this.viewFormService.formRes
 
   protected isFormSubmitInProgress = signal<boolean>(false)
   protected isFormSubmitted = signal<boolean>(false)
 
   ngOnInit() {
     this.viewFormService.loadFormRes(this.formId(), res => {
-      this.formRes.set(res)
 
       this.title.setTitle(res.title ?? 'Form engine')
 
@@ -99,13 +98,12 @@ export class ViewForm implements OnInit, OnDestroy {
     this._submitClick.next(true)
 
     const req: FormResponsePutReq = {
-      formId: this.formId(),
       responses: this.questionResponses()
     }
 
     console.log(req)
 
-    this.viewFormService.submitResponse(req, () => {
+    this.viewFormService.submitResponse(this.formId(), req, () => {
       this.isFormSubmitted.set(true)
       this.isFormSubmitInProgress.set(false)
     }, () => {

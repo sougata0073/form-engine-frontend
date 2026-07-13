@@ -34,10 +34,10 @@ export class ViewFormRating extends ViewFormQuestionComponent<RatingRes, OnlyRat
     this.ratings.set(ArrayUtil.fillByNumbers(1, this.question().maxRatingNumber))
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyRatingResponsePutReq | null {
+  override getOnlyQuestionResponsePutReq(): OnlyRatingResponsePutReq {
     const value = this.formGroup.value.rating
-    return value === null || value === undefined ? null : {
-      rating: value
+    return {
+      rating: value ?? null
     }
   }
 

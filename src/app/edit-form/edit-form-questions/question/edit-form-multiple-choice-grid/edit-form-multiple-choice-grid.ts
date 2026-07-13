@@ -41,23 +41,32 @@ export class EditFormMultipleChoiceGrid extends EditFormQuestionComponent<Multip
   private dialog = inject(MatDialog)
 
   ngOnInit() {
-    this.rows.update(() => {
-      return this.question().rows.map((row, index) => {
-        return {id: crypto.randomUUID(), orderNumber: index + 1, text: row, valid: !!row}
-      })
-    })
-    this.columns.update(() => {
-      return this.question().columns.map(col => {
-        return {id: crypto.randomUUID(), text: col, valid: !!col}
-      })
-    })
+    this.rows.set(this.question().rows
+      .sort((a, b) => a.orderIndex - b.orderIndex)
+      .map(r => ({id: r.id, option: r.row, orderIndex: r.orderIndex, valid: !!r.row}))
+    )
+
+    this.columns.set(this.question().columns
+      .sort((a, b) => a.orderIndex - b.orderIndex)
+      .map(r => ({id: r.id, option: r.column, orderIndex: r.orderIndex, valid: !!r.column}))
+    )
   }
 
   override getOnlyQuestionAddUpdateReq(): OnlyMultipleChoiceGridAddUpdateReq {
     return {
       eachRowRequired: false,
-      rows: this.rows().map(r => r.text),
-      columns: this.columns().map(c => c.text)
+      rows: this.rows().map(r => {
+        return {
+          id: r.id.startsWith('NEW_') ? null : r.id,
+          row: r.option
+        }
+      }),
+      columns: this.columns().map(c => {
+        return {
+          id: c.id.startsWith('NEW_') ? null : c.id,
+          column: c.option
+        }
+      })
     }
   }
 
@@ -70,9 +79,9 @@ export class EditFormMultipleChoiceGrid extends EditFormQuestionComponent<Multip
       return
     }
     this.rows.update(val => [...val, {
-      id: crypto.randomUUID(),
-      orderNumber: val.length + 1,
-      text: `Row ${val.length + 1}`,
+      id: 'NEW_' + crypto.randomUUID(),
+      orderIndex: val.length,
+      option: `Row ${val.length + 1}`,
       valid: true
     }])
     this.emiCanSaveHasError()
@@ -96,7 +105,8 @@ export class EditFormMultipleChoiceGrid extends EditFormQuestionComponent<Multip
 
   protected onRowTextChange(row: DropdownOption) {
     this.rows.update(val =>
-      val.map(v => v.id === row.id ? {...v, text: row.text} : v))
+      val.map(v => v.id === row.id ? {...v, option: row.option} : v))
+    this.emiCanSaveHasError()
     this.updateQuestion.emit(this.getOnlyQuestionAddUpdateReq())
   }
 
@@ -122,7 +132,13 @@ export class EditFormMultipleChoiceGrid extends EditFormQuestionComponent<Multip
       return
     }
     this.columns.update(val => {
-      const option = {id: crypto.randomUUID(), text: `Column ${val.length + 1}`, valid: true}
+      const option = {
+        id: 'NEW_' + crypto.randomUUID(),
+        orderIndex: val.length,
+        option: `Column ${val.length + 1}`,
+        valid: true
+      }
+
       return [...val, option]
     })
     this.emiCanSaveHasError()
@@ -139,8 +155,9 @@ export class EditFormMultipleChoiceGrid extends EditFormQuestionComponent<Multip
 
   protected onColumnTextChange(column: MultipleChoiceOption) {
     this.columns.update(val => {
-      return val.map(v => v.id === column.id ? {...v, text: column.text} : v)
+      return val.map(v => v.id === column.id ? {...v, option: column.option} : v)
     })
+    this.emiCanSaveHasError()
     this.updateQuestion.emit(this.getOnlyQuestionAddUpdateReq())
   }
 

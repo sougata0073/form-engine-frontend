@@ -12,14 +12,15 @@ export class ViewFormService {
 
   private http = inject(HttpClient)
 
-  private formRes = signal<FormRes | null>(null)
+  private _formRes = signal<FormRes | null>(null)
+  formRes = this._formRes.asReadonly()
 
   loadFormRes(
     formId: string,
     onComplete?: (res: FormRes) => void,
     onError?: (error: ViewFormErrorRes) => void
   ) {
-    const prev = this.formRes()
+    const prev = this._formRes()
 
     if (prev) {
       onComplete?.(prev)
@@ -32,14 +33,13 @@ export class ViewFormService {
       next: res => {
 
         if (res.ok) {
-          console.log(res.body)
-          this.formRes.set(res.body)
+          this._formRes.set(res.body)
         }
 
       },
       complete: () => {
 
-        const form = this.formRes()
+        const form = this._formRes()
         if (form) {
           onComplete?.(form)
         }
@@ -51,13 +51,13 @@ export class ViewFormService {
     })
   }
 
-  submitResponse(req: FormResponsePutReq, onComplete?: () => void, onError?: () => void) {
+  submitResponse(formId: string, req: FormResponsePutReq, onComplete?: () => void, onError?: () => void) {
 
-    const url = `http://localhost:9093/api/v1/response`
+    const url = `http://localhost:9093/api/v1/forms/${formId}/response`
 
     this.http.post<FormResponsePutRes>(url, req).subscribe({
       next: res => {
-        console.log(res)
+
       },
       complete: () => {
         onComplete?.()

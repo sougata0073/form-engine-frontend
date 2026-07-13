@@ -45,7 +45,7 @@
           <th class="column-label"></th>
 
           @for (column of columns(); track column.id) {
-            <th class="column-label">{{ column.text }}</th>
+            <th class="column-label">{{ column.option }}</th>
           }
         </tr>
         </thead>
@@ -53,7 +53,7 @@
       <tbody>
         @for (row of rows(); track row.id) {
           <tr>
-            <td class="row-label">{{ row.text }}</td>
+            <td class="row-label">{{ row.option }}</td>
             @for (column of columns(); track column.id) {
               <td class="checkbox-cell">
                 <mat-checkbox [value]="column.id" disabled/>

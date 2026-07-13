@@ -43,8 +43,8 @@ export class ViewFormCheckbox
     this.options.set(
       this.question().options.map(op => {
         const option = {
-          value: crypto.randomUUID(),
-          label: op,
+          value: op.id,
+          label: op.option,
           control: new FormControl<boolean | null>(null)
         }
 
@@ -72,13 +72,13 @@ export class ViewFormCheckbox
     })
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyCheckboxResponsePutReq | null {
-    const indexes = this.options()
-      .map((op, idx) => op.control.value ? idx : null)
-      .filter(idx => idx !== null)
+  override getOnlyQuestionResponsePutReq(): OnlyCheckboxResponsePutReq {
+    const optionIds = this.options()
+      .filter(op => op.control.value)
+      .map(op => op.value)
 
-    return !indexes.length ? null : {
-      responseIndexes: indexes
+    return {
+      responseOptionIds: optionIds
     }
   }
 

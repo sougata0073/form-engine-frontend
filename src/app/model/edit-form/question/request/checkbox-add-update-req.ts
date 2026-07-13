@@ -2,7 +2,7 @@ import {QuestionAddUpdateReq} from './question-add-update-req';
 import {ValidationConfig} from '../../../validation-config/validation-config';
 
 export interface OnlyCheckboxAddUpdateReq<VC extends ValidationConfig> {
-  options: string[],
+  options: { id: string | null, option: string }[],
   validationConfig: VC
 }
 

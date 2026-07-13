@@ -52,7 +52,7 @@ export class PublishedOptionsDialog implements OnInit {
   protected dialogRef = inject(MatDialogRef<PublishedOptionsDialog>)
   protected dialog = inject(MatDialog)
 
-  protected formInfo = inject<FormInfoRes>(MAT_DIALOG_DATA)
+  protected formInfo = this.editFormService.formInfo
 
   protected editClicked = signal<boolean>(false)
   protected canSave = signal<boolean>(false)
@@ -64,12 +64,12 @@ export class PublishedOptionsDialog implements OnInit {
 
   ngOnInit() {
     this.formGroup.patchValue({
-      acceptingResponse: this.formInfo.acceptingResponse,
-      notAcceptingResponseMessage: this.formInfo.notAcceptingResponseMessage
+      acceptingResponse: this.formInfo()!.acceptingResponse,
+      notAcceptingResponseMessage: this.formInfo()!.notAcceptingResponseMessage
     })
 
     this.formGroup.valueChanges.subscribe(val => {
-      const canSave = !ObjectUtil.areMatchingFieldsSame(this.formInfo, val)
+      const canSave = !ObjectUtil.areMatchingFieldsSame(this.formInfo()!, val)
       this.canSave.set(canSave)
     })
 
@@ -78,12 +78,12 @@ export class PublishedOptionsDialog implements OnInit {
     })
   }
 
-
   protected onSaveClick() {
     if (!this.canSave()) return
 
-    const prevForm = this.formInfo
+    const prevForm = this.formInfo()!
     const acceptingResponse = this.formGroup.value.acceptingResponse
+
     this.editFormService.updateFormInfo({
       name: prevForm.name,
       title: prevForm.title,
@@ -91,25 +91,23 @@ export class PublishedOptionsDialog implements OnInit {
       published: prevForm.published,
       acceptingResponse: acceptingResponse ?? false,
       notAcceptingResponseMessage: this.formGroup.value.notAcceptingResponseMessage ?? 'This form is no longer accepting responses.',
-      stopAcceptingResponseOn: acceptingResponse ? new Date(prevForm.stopAcceptingResponseOn) : null,
+      stopAcceptingResponseOn: acceptingResponse ? (!!prevForm.stopAcceptingResponseOn ? new Date(prevForm.stopAcceptingResponseOn) : null) : null,
       stopAcceptingResponseAfterResponse: acceptingResponse ? prevForm.stopAcceptingResponseAfterResponse : null
-    }, (res) => {
-      this.dialogRef.close(res)
+    }, () => {
+      this.dialogRef.close()
     })
   }
 
   protected openStopAcceptingResponseDialog() {
-    const ref = this.dialog.open(StopAcceptingResponseDialog, {
-      data: this.formInfo
-    })
+    const ref = this.dialog.open(StopAcceptingResponseDialog)
 
     ref.afterOpened().subscribe(() => {
-      this.dialogRef.close(this.formInfo)
+      this.dialogRef.close()
     })
 
-    ref.afterClosed().subscribe((res: FormInfoRes) => {
-      this.dialog.open(PublishedOptionsDialog, {
-        data: res ?? this.formInfo
+    ref.afterClosed().subscribe(() => {
+      this.dialog.open(PublishedOptionsDialog).afterClosed().subscribe(() => {
+        this.dialogRef.close()
       })
     })
   }

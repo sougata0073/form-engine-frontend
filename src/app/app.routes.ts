@@ -17,10 +17,13 @@ import {
 import {
   EditFormResponsesIndividual
 } from './edit-form/edit-form-responses/edit-form-responses-individual/edit-form-responses-individual';
+import {loggedInGuard} from './guard/logged-in-guard';
 
 export const routes: Routes = [
   {
     path: 'forms',
+    canActivate: [loggedInGuard],
+    canActivateChild: [loggedInGuard],
     children: [
       {
         path: ':formId',
@@ -79,6 +82,7 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    component: Home
+    component: Home,
+    canActivate: [loggedInGuard]
   }
 ];

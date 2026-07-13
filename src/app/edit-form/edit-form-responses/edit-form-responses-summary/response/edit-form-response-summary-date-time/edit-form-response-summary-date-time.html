@@ -1,1 +1,21 @@
-<p>edit-form-response-summary-date-time works!</p>
+<div class="parent-container">
+  @for (dt of dateTimes(); track dt.id) {
+    <div class="child">
+
+      <p class="date">{{ dt.date | date:'d MMM y' }}</p>
+
+      <div class="time-container">
+        @for (t of dt.times; track t.id) {
+          @if (t.occurrence > 1) {
+            <div class="time-multiple">
+              <p class="time-value">{{ t.time | date:'HH:mm' }}</p>
+              <p class="time-number">{{ t.occurrence }}</p>
+            </div>
+          } @else {
+            <p class="time">{{ t.time | date:'HH:mm' }}</p>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

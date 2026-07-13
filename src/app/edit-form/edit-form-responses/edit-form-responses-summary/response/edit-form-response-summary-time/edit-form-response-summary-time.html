@@ -1,1 +1,27 @@
-<p>edit-form-response-summary-time works!</p>
+<div class="parent-container">
+
+  @for (tm of times(); track tm.id) {
+    <div class="child">
+      <div class="hour-container">
+        <p class="hour">{{ tm.time | date:'HH' }}</p>
+        <p class="colon">:</p>
+        <div class="blank-space"></div>
+      </div>
+
+      <div class="full-time-container">
+        @for (t of tm.times; track t.id) {
+          @if (t.occurrence > 1) {
+            <div class="time-multiple">
+              <p class="time-value">{{ t.time | date:'HH:mm' }}</p>
+              <p class="time-number">{{ t.occurrence }}</p>
+            </div>
+          } @else {
+            <p class="time">{{ t.time | date:'HH:mm' }}</p>
+          }
+        }
+      </div>
+
+    </div>
+  }
+
+</div>

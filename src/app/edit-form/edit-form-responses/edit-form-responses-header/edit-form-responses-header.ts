@@ -1,4 +1,4 @@
-import {Component, effect, inject, OnDestroy, OnInit, output, signal} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, output, signal, viewChild} from '@angular/core';
 import {MatCard, MatCardContent} from "@angular/material/card";
 import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
@@ -9,11 +9,8 @@ import {MatFormField} from '@angular/material/input';
 import {MatOption} from '@angular/material/core';
 import {MatSelect} from '@angular/material/select';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {EditFormResponseService} from '../../../service/edit-form-response-service';
-import {FormResponseSummary} from '../../../model/form/form-response-summary';
-import {QuestionSummariesRes} from '../../../model/question/question-summaries-res';
-import {QuestionSummary} from '../../../model/question/question-summary';
 
 type TabLink = 'summary' | 'question' | 'individual'
 
@@ -39,8 +36,6 @@ type TabLink = 'summary' | 'question' | 'individual'
 })
 export class EditFormResponsesHeader implements OnInit, OnDestroy {
 
-  activeQuestionSummary = output<QuestionSummary>()
-
   formId = signal<string>('')
 
   protected tabs = signal<{ label: string, link: TabLink }[]>([])
@@ -50,32 +45,13 @@ export class EditFormResponsesHeader implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute)
   protected formResponseService = inject(EditFormResponseService)
 
-  protected formSummary = signal<FormResponseSummary | null>(null)
-  protected questionSummaries = signal<QuestionSummariesRes | null>(null)
+  protected formSummary = this.formResponseService.formResponseSummary
+  protected questionSummaries = this.formResponseService.questionSummaries
+
+  protected questionPaginatorPageIndex = signal<number>(0)
 
   protected formGroup = new FormGroup({
     questionSelector: new FormControl<string>('', [Validators.required])
-  })
-
-  private activatedLinkEffect = effect(() => {
-    switch (this.activatedLink()) {
-      case "question": {
-
-        this.formResponseService.loadQuestionSummaries(this.formId(), res => {
-          this.questionSummaries.set(res)
-
-          const first = res.questions.at(0)
-
-          if (first) {
-            this.formGroup.controls.questionSelector.setValue(first.id)
-          }
-        })
-
-        break
-      }
-      case "individual": {
-      }
-    }
   })
 
   ngOnInit() {
@@ -89,23 +65,65 @@ export class EditFormResponsesHeader implements OnInit, OnDestroy {
       this.formId.set(params.get('formId')!);
 
       this.formResponseService.loadFormResponseSummary(this.formId(), res => {
-        this.formSummary.set(res)
+
       })
     })
 
-    const activatedSection = this.router.url.split('/')
+    const activatedSection = this.router.url.split(/[/?]/)
       .find(s => this.tabs().map(t => t.link).includes(s as TabLink))
 
     this.activatedLink.set(activatedSection as TabLink)
+    this.onActivatedLinkChange()
+
+    this.formGroup.controls.questionSelector.valueChanges.subscribe(val => {
+      const index = this.questionSummaries()?.questions.findIndex(q => q.id === val)
+      if (index !== undefined) {
+        this.questionPaginatorPageIndex.set(index)
+      }
+
+      if (val) {
+        this.router.navigate(['question'], {
+          relativeTo: this.activatedRoute,
+          queryParams: {q: val}
+        })
+      }
+    })
   }
 
   ngOnDestroy() {
-    this.activatedLinkEffect.destroy()
   }
 
   protected onTabClick(link: TabLink) {
     this.router.navigate([link], {relativeTo: this.activatedRoute})
     this.activatedLink.set(link)
+    this.onActivatedLinkChange()
+  }
+
+  protected handleQuestionPaginatorPageEvent(e: PageEvent) {
+    const question = this.questionSummaries()?.questions.at(e.pageIndex)
+
+    if (question) {
+      this.formGroup.controls.questionSelector.setValue(question.id)
+    }
+  }
+
+  private onActivatedLinkChange() {
+    switch (this.activatedLink()) {
+      case "question": {
+
+        this.formResponseService.loadQuestionSummaries(this.formId(), res => {
+          const first = res.questions.at(0)
+
+          if (first) {
+            this.formGroup.controls.questionSelector.setValue(first.id)
+          }
+        })
+
+        break
+      }
+      case "individual": {
+      }
+    }
   }
 
 }

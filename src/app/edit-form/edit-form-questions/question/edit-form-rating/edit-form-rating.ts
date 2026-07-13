@@ -52,6 +52,8 @@ export class EditFormRating extends EditFormQuestionComponent<RatingRes, OnlyRat
 
     this.formGroup.valueChanges.subscribe(val => {
       this.previewRatings.update(() => ArrayUtil.fillByNumbers(1, val.ratingNumber ?? 1))
+
+      this.emitCanSaveHasError()
       this.updateQuestion.emit(this.getOnlyQuestionAddUpdateReq())
     })
     this.formGroup.statusChanges.subscribe(() => this.emitCanSaveHasError())

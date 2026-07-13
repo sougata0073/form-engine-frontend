@@ -1,26 +1,29 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
-  ChartComponent,
+  ApexAnnotations,
   ApexAxisChartSeries,
-  ApexNonAxisChartSeries,
   ApexChart,
-  ApexXAxis,
-  ApexYAxis,
-  ApexTitleSubtitle,
   ApexDataLabels,
-  ApexStroke,
   ApexFill,
+  ApexGrid,
   ApexLegend,
-  ApexTooltip,
   ApexMarkers,
+  ApexNonAxisChartSeries,
   ApexPlotOptions,
   ApexResponsive,
-  ApexGrid,
-  ApexAnnotations,
   ApexStates,
+  ApexStroke,
   ApexTheme,
+  ApexTitleSubtitle,
+  ApexTooltip,
+  ApexXAxis,
+  ApexYAxis,
   NgApexchartsModule,
 } from 'ng-apexcharts';
+import {EditFormResponseSummaryComponent} from '../../../../../type/edit-form-response-summary-component';
+import {
+  MultipleChoiceGridResponseSummaryRes
+} from '../../../../../model/edit-form/responses/summary/multiple-choice-grid-response-summary-res';
 
 export type ChartOptions = {
   series?: ApexAxisChartSeries | ApexNonAxisChartSeries;
@@ -47,79 +50,91 @@ export type ChartOptions = {
 
 @Component({
   selector: 'app-edit-form-response-summary-multiple-choice-grid',
+  standalone: true,
   imports: [NgApexchartsModule],
   templateUrl: './edit-form-response-summary-multiple-choice-grid.html',
   styleUrl: './edit-form-response-summary-multiple-choice-grid.scss',
 })
-export class EditFormResponseSummaryMultipleChoiceGrid {
-  private colors: any = [
-    '#008FFB',
-    '#00E396',
-    '#FEB019',
-    '#FF4560',
-    '#775DD0',
-    '#546E7A',
-    '#26a69a',
-    '#D10CE8',
-  ];
+export class EditFormResponseSummaryMultipleChoiceGrid
+  extends EditFormResponseSummaryComponent<MultipleChoiceGridResponseSummaryRes>
+  implements OnInit {
 
-  public chartOptions: Partial<ChartOptions> = {
-    series: [
-      {
-        data: [21, 22, 10, 28, 16, 21, 13, 30, 21, 22, 10, 28, 16, 21, 13, 30, 21, 22, 10, 28],
+  public chartOptions: Partial<ChartOptions> | null = null;
+
+  ngOnInit(): void {
+
+    const summary = this.responseSummary();
+    const rows = summary.responses;
+
+    const series: ApexAxisChartSeries = rows.length === 0
+      ? []
+      : rows[0].responses.map(column => ({
+        name: column.column,
+        data: rows.map(row => {
+          const response = row.responses.find(r => r.columnId === column.columnId);
+          return Number(response?.responseCount ?? 0);
+        })
+      }));
+
+    this.chartOptions = {
+      series,
+
+      chart: {
+        type: 'bar',
+        height: 450,
+        toolbar: {
+          show: true
+        }
       },
-    ],
-    chart: {
-      height: 350,
-      type: 'bar',
-      events: {
-        click: (chart, w, e) => {
-          // console.log(chart, w, e)
+
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '60%',
+          borderRadius: 4,
+          borderRadiusApplication: 'end'
+        }
+      },
+
+      dataLabels: {
+        enabled: false
+      },
+
+      stroke: {
+        show: true,
+        width: 1,
+        colors: ['transparent']
+      },
+
+      fill: {
+        opacity: 1
+      },
+
+      xaxis: {
+        categories: rows.map(r => r.row),
+      },
+
+      yaxis: {
+        title: {
+          text: 'Responses'
         },
+        min: 0,
+        forceNiceScale: true
       },
-    },
-    colors: this.colors,
-    plotOptions: {
-      bar: {
-        columnWidth: '45%',
-        distributed: true,
+
+      legend: {
+        position: 'top',
+        horizontalAlign: 'center'
       },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    legend: {
-      show: false,
-    },
-    xaxis: {
-      categories: [
-        ['John', 'Doe'],
-        ['Joe', 'Smith'],
-        ['Jake', 'Williams'],
-        'Amber',
-        ['Peter', 'Brown'],
-        ['Mary', 'Evans'],
-        ['David', 'Wilson'],
-        ['Lily', 'Roberts'],
-        ['John', 'Doe'],
-        ['Joe', 'Smith'],
-        ['Jake', 'Williams'],
-        'Amber',
-        ['Peter', 'Brown'],
-        ['Mary', 'Evans'],
-        ['David', 'Wilson'],
-        ['Lily', 'Roberts'],
-        ['John', 'Doe'],
-        ['Joe', 'Smith'],
-        ['Jake', 'Williams'],
-        'Amber'
-      ],
-      labels: {
-        style: {
-          colors: this.colors,
-          fontSize: '12px',
-        },
-      },
-    },
-  };
+
+      tooltip: {
+        enabled: false,
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: (value: number) => `${value} response${value === 1 ? '' : 's'}`
+        }
+      }
+    }
+  }
 }

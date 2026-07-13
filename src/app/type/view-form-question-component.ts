@@ -17,7 +17,7 @@ export abstract class ViewFormQuestionComponent<QR extends QuestionRes, OnlyQues
 
   protected viewFormStateService = inject(ViewFormStateService)
 
-  abstract getOnlyQuestionResponsePutReq(): OnlyQuestionResponsePutReq | null
+  abstract getOnlyQuestionResponsePutReq(): OnlyQuestionResponsePutReq
 
   clearForm() {
     Object.values(this.formGroup.controls).forEach(control => {

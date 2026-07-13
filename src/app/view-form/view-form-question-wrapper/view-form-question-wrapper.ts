@@ -47,23 +47,29 @@ export class ViewFormQuestionWrapper implements OnInit {
   private componentFactory = inject(ViewFormQuestionComponentFactory)
 
   ngOnInit() {
+
     this.createComponent(this.question().questionType, this.question())
+
     this.submitClick()?.subscribe(val => {
+
       const instance = this.createdComponentRef?.instance
       if (val && instance instanceof ViewFormQuestionComponent) {
+
         const onlyQuestionResponse = instance.getOnlyQuestionResponsePutReq()
+
         const questionResponse: QuestionResponsePutReq = {
           questionId: this.question().id,
+          question: this.question().question,
           questionType: this.question().questionType
         }
-        if (onlyQuestionResponse) {
-          this.questionResponse.emit({
-            ...onlyQuestionResponse,
-            ...questionResponse
-          })
-        }
+
+        this.questionResponse.emit({
+          ...onlyQuestionResponse,
+          ...questionResponse
+        })
       }
     })
+
     this.clearClick()?.subscribe(val => {
       const instance = this.createdComponentRef?.instance
       if (val && instance instanceof ViewFormQuestionComponent) {

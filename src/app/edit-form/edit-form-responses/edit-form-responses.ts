@@ -16,11 +16,8 @@ import {ActivatedRoute, Router, RouterOutlet} from '@angular/router';
 })
 export class EditFormResponses implements OnInit {
 
-  private router = inject(Router)
-  private activatedRoute = inject(ActivatedRoute)
-
   ngOnInit() {
-    // this.router.navigate(['summary'], {relativeTo: this.activatedRoute})
+
   }
 
 }

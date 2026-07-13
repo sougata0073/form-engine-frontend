@@ -16,7 +16,11 @@ export class EditFormQuestionService {
 
   private http = inject(HttpClient)
 
-  private formRes = signal<FormRes | null>(null)
+  private _formInfo = signal<FormInfoRes | null>(null)
+  formInfo = this._formInfo.asReadonly()
+
+  private _formRes = signal<FormRes | null>(null)
+  formRes = this._formRes.asReadonly()
 
   createForm(form: FormAddUpdateReq, onComplete?: (res: FormInfoRes) => void) {
     const url = 'http://localhost:9092/api/v1/forms'
@@ -30,26 +34,28 @@ export class EditFormQuestionService {
   updateFormInfo = debounce(
     (form: FormAddUpdateReq, onComplete?: (res: FormInfoRes) => void) => {
 
-      const url = `http://localhost:9092/api/v1/forms/${this.formRes()?.id}`
+      const url = `http://localhost:9092/api/v1/forms/${this._formRes()?.id}`
 
       this.http.put<FormInfoRes>(url, form).subscribe(res => {
-
-        this.formRes.update(prev => {
+        this._formInfo.set(res)
+        this._formRes.update(prev => {
           return {...prev!, ...res}
         })
 
         onComplete?.(res)
       })
-    }, 500)
+    }, 1000)
 
-  loadFormInfo(formId: string) {
+  loadFormInfo(formId: string, onComplete: (res: FormInfoRes) => void) {
     const url = `http://localhost:9092/api/v1/forms/${formId}/info`
 
-    return this.http.get<FormInfoRes>(url)
+    this.http.get<FormInfoRes>(url).subscribe(res => {
+      this._formInfo.set(res)
+    })
   }
 
   loadFormRes(formId: string, onComplete?: (res: FormRes) => void) {
-    const prev = this.formRes()
+    const prev = this._formRes()
     if (prev) {
 
       onComplete?.(prev)
@@ -61,25 +67,23 @@ export class EditFormQuestionService {
 
     this.http.get<FormRes>(url).subscribe(res => {
 
-      console.log(res)
-
-      this.formRes.set(res)
+      this._formRes.set(res)
 
       onComplete?.(res)
     })
   }
 
-  addQuestion(question: AnyQuestionAddUpdateReq, onComplete?: (res: FormInfoRes) => void) {
+  addQuestion(question: AnyQuestionAddUpdateReq, onComplete?: (res: FormRes) => void) {
 
-    const url = `http://localhost:9092/api/v1/forms/${this.formRes()!.id}/questions`
+    const url = `http://localhost:9092/api/v1/forms/${this._formRes()!.id}/questions`
 
     this.http.post<AnyQuestionRes>(url, question).subscribe(res => {
 
-      this.formRes.update(prev => {
+      this._formRes.update(prev => {
         return {...prev!, questions: [...prev!.questions, res]}
       })
 
-      const form = this.formRes()
+      const form = this._formRes()
 
       if (form) {
         onComplete?.(form)
@@ -94,11 +98,11 @@ export class EditFormQuestionService {
       onComplete?: (res: AnyQuestionRes) => void
     ) => {
 
-      const url = `http://localhost:9092/api/v1/forms/${this.formRes()!.id}/questions/${questionId}`;
+      const url = `http://localhost:9092/api/v1/forms/${this._formRes()!.id}/questions/${questionId}`;
 
       this.http.put<AnyQuestionRes>(url, question).subscribe(res => {
 
-        this.formRes.update(prev => {
+        this._formRes.update(prev => {
           const newQuestions = prev!.questions.map(q =>
             q.id === res.id ? structuredClone(res) : structuredClone(q)
           );
@@ -108,16 +112,16 @@ export class EditFormQuestionService {
         onComplete?.(res);
       });
     },
-    500
+    1000
   );
 
   deleteQuestion(questionId: string, questionType: QuestionType, onComplete?: () => void) {
 
-    const url = `http://localhost:9092/api/v1/forms/${this.formRes()!.id}/questions/${questionId}`
+    const url = `http://localhost:9092/api/v1/forms/${this._formRes()!.id}/questions/${questionId}`
 
     this.http.delete<SuccessMessage>(url, {params: {questionType: questionType}})
       .subscribe(() => {
-        this.formRes.update(prev => {
+        this._formRes.update(prev => {
           const newQuestions = prev!.questions.filter(q => q.id !== questionId)
           return {...prev!, questions: newQuestions}
         })

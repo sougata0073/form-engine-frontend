@@ -64,6 +64,7 @@
   }
 
   .not-accepting-response-message-container,
+  .response-already-submitted-message-container,
   .form-submitted-message-container {
     width: 50%;
     justify-self: center;
@@ -72,6 +73,7 @@
     gap: $space-sm;
 
     .not-accepting-response-content-container,
+    .response-already-submitted-content-container,
     .form-submitted-content-container {
       display: flex;
       flex-direction: column;
