@@ -3,11 +3,11 @@ import {
   OnlyMultipleChoiceGridColumnRes,
   OnlyMultipleChoiceGridRowRes
 } from '../../question/response/multiple-choice-grid-res';
+import {ResponseQuestion} from './response-question';
 
-export interface MultipleChoiceGridResponseQuestionRes {
+export interface MultipleChoiceGridResponseQuestionRes extends ResponseQuestion<MultipleChoiceGridResponseQuestionResRow> {
   rows: OnlyMultipleChoiceGridRowRes[],
   columns: OnlyMultipleChoiceGridColumnRes[],
-  responses: MultipleChoiceGridResponseQuestionResRow[]
 }
 
 export interface MultipleChoiceGridResponseQuestionResRow {
@@ -16,5 +16,5 @@ export interface MultipleChoiceGridResponseQuestionResRow {
 }
 
 export interface MultipleChoiceGridResponseQuestionResColumn extends CommonResponseQuestionResponse {
-  columnId: string | null
+  columnId: string
 }

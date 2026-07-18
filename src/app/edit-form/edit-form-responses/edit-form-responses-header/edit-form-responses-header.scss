@@ -44,5 +44,19 @@
         flex-direction: row;
       }
     }
+
+    .no-response-text {
+      font-family: Roboto, Arial, sans-serif;
+      font-size: $space-sm;
+      font-weight: 400;
+      letter-spacing: .3px;
+      line-height: $space-md;
+      color: #757575;
+      background-color: #fff;
+      border: 1px solid #dadada;
+      border-radius: $space-xs;
+      padding: $space-lg;
+      text-align: center;
+    }
   }
 }

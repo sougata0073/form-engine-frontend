@@ -1,1 +1,58 @@
-<p>edit-form-response-question-dropdown works!</p>
+<div class="parent-container">
+  <mat-card appearance="raised" class="card-container">
+    <mat-card-content class="question-card-content no-padding-card">
+      <div class="question-container">
+        <p class="question">{{ response().question ?? 'Question' }}</p>
+        @if (isOptionsVisible()) {
+          <button class="square-text-button" matButton (click)="isOptionsVisible.set(!isOptionsVisible())">
+            Hide options
+            <mat-icon fontIcon="keyboard_arrow_up"/>
+          </button>
+        } @else {
+          <button class="square-text-button" matButton (click)="isOptionsVisible.set(!isOptionsVisible())">
+            View options
+            <mat-icon fontIcon="keyboard_arrow_down"/>
+          </button>
+        }
+      </div>
+      @if (isOptionsVisible()) {
+        <div class="options-container">
+          @for (option of response().options; track option.id) {
+            <div class="option">
+              <p class="name">{{ ($index + 1) + '. ' + option.option }}</p>
+            </div>
+          }
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+  @for (response of response().responses; track $index) {
+    <mat-card appearance="raised" class="card-container">
+      <mat-card-content class="response-card-content no-padding-card">
+        <div class="options-container">
+          <div class="option">
+            <p class="name">{{ getOptionFromId(response.optionId)?.option }}</p>
+          </div>
+        </div>
+        <div class="response-count">
+          <button class="square-text-button" [matMenuTriggerFor]="responseIdsMenu"
+                  matButton>{{ response.responseCount + ' responses' }}
+          </button>
+        </div>
+        <mat-menu #responseIdsMenu="matMenu" class="decorated-menu">
+          @for (id of response.responseIds; track id) {
+            <button mat-menu-item (click)="onResponseIdClick(id)">
+              <span>{{ getFormResponseSummaryFromFormResponseId(id)?.responderUserName }}</span>
+            </button>
+          }
+        </mat-menu>
+      </mat-card-content>
+    </mat-card>
+  }
+  @if (showQuestionLeftBlank()) {
+    <app-edit-form-responses-question-blank-response
+      [responseCount]="blankResponseCount()"
+      [responseSummaries]="blankResponseSummaries()"
+      (responseIdClick)="onResponseIdClick($event)"/>
+  }
+</div>

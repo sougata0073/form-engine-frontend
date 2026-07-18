@@ -1,0 +1,37 @@
+@use 'index' as *;
+@use '@angular/material' as mat;
+
+.card-container {
+  @include mat.card-overrides((
+    elevated-container-shape: $space-xs,
+    elevated-container-color: white
+  ));
+
+  .response-card-content {
+    display: flex;
+    flex-direction: column;
+
+    .response-count {
+      border-top: 1px solid #dadada;
+      margin: 0 $space-lg;
+      padding: $space-sm 0;
+
+      .square-text-button {
+        @include mat.button-overrides((
+          text-container-shape: $space-xxs
+        ));
+      }
+    }
+
+    .question-left-blank {
+      padding: $space-lg;
+      font-family: Roboto, Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: .2px;
+      line-height: 20px;
+      color: #757575;
+      font-style: italic;
+    }
+  }
+}

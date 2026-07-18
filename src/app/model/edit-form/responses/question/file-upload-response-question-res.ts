@@ -1,11 +1,11 @@
 import {CommonResponseQuestionResponse} from './common-response-question-response';
+import {ResponseQuestion} from './response-question';
 
-export interface FileUploadResponseQuestionRes {
-  responses: FileUploadResponseQuestionResResponse[]
+export interface FileUploadResponseQuestionRes extends ResponseQuestion<FileUploadResponseQuestionResResponse> {
 }
 
 export interface FileUploadResponseQuestionResResponse extends CommonResponseQuestionResponse {
-  fileName: string | null,
-  fileUrl: string | null,
-  fileMimeType: string | null
+  fileName: string,
+  fileUrl: string,
+  fileMimeType: string
 }

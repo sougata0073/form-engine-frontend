@@ -1,1 +1,43 @@
-<p>edit-form-response-question-linear-scale works!</p>
+<div class="parent-container">
+  <mat-card appearance="raised" class="card-container">
+    <mat-card-content class="question-card-content no-padding-card">
+      <p class="question">{{ response().question ?? 'Question' }}</p>
+    </mat-card-content>
+  </mat-card>
+  @for (response of response().responses; track $index) {
+    <mat-card appearance="raised" class="card-container">
+      <mat-card-content class="response-card-content no-padding-card">
+        <div class="scale-container">
+          @for (num of scaleNums(); track num) {
+            <div class="scale">
+              <p class="number">{{ num }}</p>
+              @if (num === response.scale) {
+                <mat-icon fontIcon="radio_button_checked"/>
+              } @else {
+                <mat-icon fontIcon="radio_button_unchecked"/>
+              }
+            </div>
+          }
+        </div>
+        <div class="response-count">
+          <button class="square-text-button" [matMenuTriggerFor]="responseIdsMenu"
+                  matButton>{{ response.responseCount + ' responses' }}
+          </button>
+        </div>
+        <mat-menu #responseIdsMenu="matMenu" class="decorated-menu">
+          @for (id of response.responseIds; track id) {
+            <button mat-menu-item (click)="onResponseIdClick(id)">
+              <span>{{ getFormResponseSummaryFromFormResponseId(id)?.responderUserName }}</span>
+            </button>
+          }
+        </mat-menu>
+      </mat-card-content>
+    </mat-card>
+  }
+  @if (showQuestionLeftBlank()) {
+    <app-edit-form-responses-question-blank-response
+      [responseCount]="blankResponseCount()"
+      [responseSummaries]="blankResponseSummaries()"
+      (responseIdClick)="onResponseIdClick($event)"/>
+  }
+</div>

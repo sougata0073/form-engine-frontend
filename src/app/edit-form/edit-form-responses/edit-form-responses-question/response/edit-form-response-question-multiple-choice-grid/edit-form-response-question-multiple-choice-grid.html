@@ -1,1 +1,67 @@
-<p>edit-form-response-question-multiple-choice-grid works!</p>
+<div class="parent-container">
+  <mat-card appearance="raised" class="card-container">
+    <mat-card-content class="question-card-content no-padding-card">
+      <p class="question">{{ response().question ?? 'Question' }}</p>
+      <div class="option-selector-container" [class]="{'with-options': rows().length || columns().length}">
+        <table>
+          @if (columns().length) {
+            <thead>
+            <tr>
+              <th class="column-label"></th>
+
+              @for (column of columns(); track column.id) {
+                <th class="column-label">{{ column.column }}</th>
+              }
+            </tr>
+            </thead>
+          }
+          <tbody>
+            @for (row of rows(); track row.id) {
+              <tr class="row" (click)="selectRow(row)" [class.selected]="selectedRow()?.id === row.id">
+                <td class="row-label">{{ row.row }}</td>
+                <td [attr.colspan]="columns().length">
+                  <mat-radio-group class="radio-group">
+                    @for (column of columns(); track column.id) {
+                      <mat-radio-button [value]="column.column" class="radio-item" disabled/>
+                    }
+                  </mat-radio-group>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  @for (response of responsesBySelectedRow(); track response.columnId) {
+    <mat-card appearance="raised" class="card-container">
+      <mat-card-content class="response-card-content no-padding-card">
+        <div class="options-container">
+          <div class="option">
+            <mat-radio-button [name]="response.columnId" [checked]="true" disabled/>
+            <p class="name">{{ getColumnFromId(response.columnId)?.column }}</p>
+          </div>
+        </div>
+        <div class="response-count">
+          <button class="square-text-button" [matMenuTriggerFor]="responseIdsMenu"
+                  matButton>{{ response.responseCount + ' responses' }}
+          </button>
+        </div>
+        <mat-menu #responseIdsMenu="matMenu" class="decorated-menu">
+          @for (id of response.responseIds; track id) {
+            <button mat-menu-item (click)="onResponseIdClick(id)">
+              <span>{{ getFormResponseSummaryFromFormResponseId(id)?.responderUserName }}</span>
+            </button>
+            <p>{{id}}</p>
+          }
+        </mat-menu>
+      </mat-card-content>
+    </mat-card>
+  }
+  @if (showQuestionLeftBlank()) {
+    <app-edit-form-responses-question-blank-response
+      [responseCount]="blankResponseCount()"
+      [responseSummaries]="blankResponseSummaries()"
+      (responseIdClick)="onResponseIdClick($event)"/>
+  }
+</div>

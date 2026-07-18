@@ -78,8 +78,9 @@ export class ViewFormTickBoxGrid extends ViewFormQuestionComponent<TickBoxGridRe
     })
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyTickBoxGridResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyTickBoxGridResponsePutReq | null {
     const rows: OnlyTickBoxGridRowResponsePutReq[] = this.options()
+      .filter(op => op.columns.some(c => c.control.value))
       .map(op => {
         return {
           rowId: op.row.value,
@@ -89,7 +90,8 @@ export class ViewFormTickBoxGrid extends ViewFormQuestionComponent<TickBoxGridRe
         }
       })
 
-    return {rows: rows}
+    return rows.length === 0 || rows.every(r => r.responseColumnIds.every(id => id === null)) ?
+      null : {rows: rows}
   }
 
   override clearForm() {

@@ -68,17 +68,19 @@ export class ViewFormMultipleChoiceGrid extends ViewFormQuestionComponent<Multip
     super.ngOnInit();
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyMultipleChoiceGridResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyMultipleChoiceGridResponsePutReq | null {
 
     const rows: OnlyMultipleChoiceGridRowResponsePutReq[] = this.options()
+      .filter(op => op.row.control.value !== null)
       .map(op => {
         return {
           rowId: op.row.value,
-          responseColumnId: op.row.control.value
+          responseColumnId: op.row.control.value!
         }
       })
 
-    return {rows: rows}
+    return rows.length === 0 || rows.every(r => r.responseColumnId === null) ?
+      null : {rows: rows}
   }
 
   protected onRadioButtonCLick(controlName: string, value: string) {

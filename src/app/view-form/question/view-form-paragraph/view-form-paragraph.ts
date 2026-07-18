@@ -7,6 +7,7 @@ import {MatError, MatFormField, MatInput, MatLabel} from "@angular/material/inpu
 import {ParagraphValidationConfig} from '../../../model/validation-config/paragraph-validation-config';
 import {RegexValidator} from '../../../formValidator/regex-validator';
 import {OnlyParagraphResponsePutReq} from '../../../model/view-form/request/paragraph-response-put-req';
+import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-view-form-paragraph',
@@ -15,7 +16,8 @@ import {OnlyParagraphResponsePutReq} from '../../../model/view-form/request/para
     MatFormField,
     MatInput,
     MatLabel,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CdkTextareaAutosize
   ],
   templateUrl: './view-form-paragraph.html',
   styleUrl: './view-form-paragraph.scss',
@@ -74,9 +76,9 @@ export class ViewFormParagraph
     }
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyParagraphResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyParagraphResponsePutReq | null {
     const value = this.formGroup.value.paragraph
-    return {text: value ?? null}
+    return !value ? null : {text: value}
   }
 
   private getFormValidator(): ValidatorFn | null {

@@ -1,11 +1,11 @@
 import {CommonResponseQuestionResponse} from './common-response-question-response';
+import {ResponseQuestion} from './response-question';
 
-export interface DurationResponseQuestionRes {
-  responses: DurationResponseQuestionResResponse[]
+export interface DurationResponseQuestionRes extends ResponseQuestion<DurationResponseQuestionResResponse> {
 }
 
 export interface DurationResponseQuestionResResponse extends CommonResponseQuestionResponse {
-  hours: number | null,
-  minutes: number | null,
-  seconds: number | null
+  hours: number,
+  minutes: number,
+  seconds: number
 }

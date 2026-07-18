@@ -1,1 +1,57 @@
-<p>edit-form-response-question-duration works!</p>
+<div class="parent-container">
+  <mat-card appearance="raised" class="card-container">
+    <mat-card-content class="question-card-content no-padding-card">
+      <p class="question">{{ response().question ?? 'Question' }}</p>
+    </mat-card-content>
+  </mat-card>
+  @for (response of response().responses; track $index) {
+    <mat-card appearance="raised" class="card-container">
+      <mat-card-content class="response-card-content no-padding-card">
+        <div class="duration-container">
+          <div class="duration-part-container">
+            <p class="part">Hr</p>
+            <div class="duration-value-container">
+              <p class="value">{{ response.hours }}</p>
+            </div>
+          </div>
+          <div class="duration-divider">
+            <p class="divider">:</p>
+          </div>
+          <div class="duration-part-container">
+            <p class="part">Min</p>
+            <div class="duration-value-container">
+              <p class="value">{{ response.minutes }}</p>
+            </div>
+          </div>
+          <div class="duration-divider">
+            <p class="divider">:</p>
+          </div>
+          <div class="duration-part-container">
+            <p class="part">Sec</p>
+            <div class="duration-value-container">
+              <p class="value">{{ response.seconds }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="response-count">
+          <button class="square-text-button" [matMenuTriggerFor]="responseIdsMenu"
+                  matButton>{{ response.responseCount + ' responses' }}
+          </button>
+        </div>
+        <mat-menu #responseIdsMenu="matMenu" class="decorated-menu">
+          @for (id of response.responseIds; track id) {
+            <button mat-menu-item (click)="onResponseIdClick(id)">
+              <span>{{ getFormResponseSummaryFromFormResponseId(id)?.responderUserName }}</span>
+            </button>
+          }
+        </mat-menu>
+      </mat-card-content>
+    </mat-card>
+  }
+  @if (showQuestionLeftBlank()) {
+    <app-edit-form-responses-question-blank-response
+      [responseCount]="blankResponseCount()"
+      [responseSummaries]="blankResponseSummaries()"
+      (responseIdClick)="onResponseIdClick($event)"/>
+  }
+</div>

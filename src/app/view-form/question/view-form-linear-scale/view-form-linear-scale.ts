@@ -32,10 +32,10 @@ export class ViewFormLinearScale extends ViewFormQuestionComponent<LinearScaleRe
     this.radioButtons.set(ArrayUtil.fillByNumbers(this.question().fromNumber, this.question().toNumber))
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyLinearScaleResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyLinearScaleResponsePutReq | null {
     const value = this.formGroup.value.linearScale
-    return {
-      scale: value ?? null
+    return value === null || value === undefined ? null : {
+      scale: value
     }
   }
 

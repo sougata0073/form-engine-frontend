@@ -1,0 +1,17 @@
+<mat-card appearance="raised" class="card-container">
+  <mat-card-content class="response-card-content no-padding-card">
+    <p class="question-left-blank">Question left blank</p>
+    <div class="response-count">
+      <button class="square-text-button" [matMenuTriggerFor]="responseIdsMenu"
+              matButton>{{ responseCount() + ' responses' }}
+      </button>
+    </div>
+    <mat-menu #responseIdsMenu="matMenu" class="decorated-menu">
+      @for (res of responseSummaries(); track res.responseId) {
+        <button class="menu-button" mat-menu-item (click)="responseIdClick.emit(res.responseId)">
+          <span>{{ res.responderUserName }}</span>
+        </button>
+      }
+    </mat-menu>
+  </mat-card-content>
+</mat-card>

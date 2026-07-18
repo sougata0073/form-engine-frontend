@@ -16,6 +16,7 @@ import {EditFormStateService} from '../../../service/edit-form-state-service';
 import {FocusableComponent} from '../../../type/focusable-component';
 import {EditFormQuestionService} from '../../../service/edit-form-question-service';
 import {FormRes} from '../../../model/form/form-res';
+import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-edit-form-info',
@@ -24,7 +25,8 @@ import {FormRes} from '../../../model/form/form-res';
     ReactiveFormsModule,
     MatInput,
     MatFormField,
-    MatLabel
+    MatLabel,
+    CdkTextareaAutosize
   ],
   templateUrl: './edit-form-info.html',
   styleUrl: './edit-form-info.scss',

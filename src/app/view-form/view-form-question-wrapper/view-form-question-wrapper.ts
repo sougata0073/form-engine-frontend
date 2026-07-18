@@ -59,14 +59,15 @@ export class ViewFormQuestionWrapper implements OnInit {
 
         const questionResponse: QuestionResponsePutReq = {
           questionId: this.question().id,
-          question: this.question().question,
           questionType: this.question().questionType
         }
 
-        this.questionResponse.emit({
-          ...onlyQuestionResponse,
-          ...questionResponse
-        })
+        if (onlyQuestionResponse) {
+          this.questionResponse.emit({
+            ...onlyQuestionResponse,
+            ...questionResponse
+          })
+        }
       }
     })
 

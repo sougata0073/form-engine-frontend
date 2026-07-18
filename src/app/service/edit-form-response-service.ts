@@ -4,6 +4,8 @@ import {FormResponseSummary} from '../model/form/form-response-summary';
 import {QuestionSummariesRes} from '../model/question/question-summaries-res';
 import {AnyResponseSummaryRes} from '../type/any-response-summary-res';
 import {ResponseSummaryRes} from '../model/edit-form/responses/summary/response-summary-res';
+import {AnyResponseQuestionRes} from '../type/any-response-question-res';
+import {AllResponseCountAndIds} from '../model/edit-form/responses/question/all-response-count-and-ids';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +22,12 @@ export class EditFormResponseService {
 
   private _responseSummaries = signal<ResponseSummaryRes | null>(null)
   responseSummaries = this._responseSummaries.asReadonly()
+
+  private _responseByQuestion = signal<AnyResponseQuestionRes | null>(null)
+  responseByQuestion = this._responseByQuestion.asReadonly()
+
+  private _allResponseCountAndSummaries = signal<AllResponseCountAndIds | null>(null)
+  allResponseCountAndSummaries = this._allResponseCountAndSummaries.asReadonly()
 
   loadFormResponseSummary(formId: string, onComplete: (res: FormResponseSummary) => void) {
     const prev = this._formResponseSummary()
@@ -67,5 +75,38 @@ export class EditFormResponseService {
 
   }
 
+  loadResponseByQuestion(formId: string, questionId: string, onComplete: (res: AnyResponseQuestionRes) => void) {
+
+    const prev = this._responseByQuestion()
+
+    if (prev && prev.questionId === questionId) {
+      onComplete(prev)
+      return
+    }
+
+    const url = `http://localhost:9093/api/v1/forms/${formId}/questions/${questionId}/response`
+
+    this.http.get<AnyResponseQuestionRes>(url).subscribe(res => {
+      this._responseByQuestion.set(res)
+      onComplete(res)
+    })
+  }
+
+  loadAllResponseCountAndSummaries(formId: string, onComplete: (res: AllResponseCountAndIds) => void) {
+
+    const prev = this._allResponseCountAndSummaries()
+
+    if (prev) {
+      onComplete(prev)
+      return
+    }
+
+    const url = `http://localhost:9093/api/v1/forms/${formId}/all-response-count-and-ids`
+
+    this.http.get<AllResponseCountAndIds>(url).subscribe(res => {
+      this._allResponseCountAndSummaries.set(res)
+      onComplete(res)
+    })
+  }
 
 }

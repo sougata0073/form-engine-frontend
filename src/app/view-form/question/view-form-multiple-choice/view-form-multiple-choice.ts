@@ -36,11 +36,11 @@ export class ViewFormMultipleChoice extends ViewFormQuestionComponent<MultipleCh
     )
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyMultipleChoiceResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyMultipleChoiceResponsePutReq | null {
     const id = this.formGroup.value.multipleChoice
 
-    return {
-      responseOptionId: id ?? null
+    return id === null || id === undefined ? null : {
+      responseOptionId: id
     }
   }
 

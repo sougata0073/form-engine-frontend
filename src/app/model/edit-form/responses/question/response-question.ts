@@ -1,8 +1,9 @@
 import {QuestionType} from '../../../../type/question-type';
 
-export interface ResponseQuestion {
+export interface ResponseQuestion<TResponses> {
   questionId: string,
   question: string | null,
   questionType: QuestionType,
-  totalResponseCount: string
+  totalResponseCount: string,
+  responses: TResponses[]
 }

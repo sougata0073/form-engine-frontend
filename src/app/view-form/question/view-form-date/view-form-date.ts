@@ -32,8 +32,8 @@ export class ViewFormDate extends ViewFormQuestionComponent<DateRes, OnlyDateRes
     date: new FormControl<Date | null>(null)
   })
 
-  override getOnlyQuestionResponsePutReq(): OnlyDateResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyDateResponsePutReq | null {
     const value = this.formGroup.value.date
-    return {date: value ?? null}
+    return value ? {date: value} : null
   }
 }

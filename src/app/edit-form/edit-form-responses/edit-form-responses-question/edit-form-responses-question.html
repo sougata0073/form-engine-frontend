@@ -1,1 +1,5 @@
-{{questionId()}}
+@let fId = formId();
+@let response = responseByQuestion();
+@if (fId && response) {
+  <app-edit-form-response-question-wrapper [response]="response" [formId]="fId"/>
+}

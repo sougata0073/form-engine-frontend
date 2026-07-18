@@ -77,9 +77,9 @@ export class ViewFormShortAnswer
     }
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyShortAnswerResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyShortAnswerResponsePutReq | null {
     const value = this.formGroup.value.shortAnswer
-    return {text: value ?? null}
+    return !value ? null : {text: value}
   }
 
   private getFormValidator(): ValidatorFn | null {

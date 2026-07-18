@@ -60,9 +60,9 @@ export class ViewFormDateTime extends ViewFormQuestionComponent<DateTimeRes, Onl
     })
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyDateTimeResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyDateTimeResponsePutReq | null {
     const value = this.dateTime()
-    return {dateTime: value}
+    return value ? {dateTime: value} : null
   }
 
   override clearForm() {

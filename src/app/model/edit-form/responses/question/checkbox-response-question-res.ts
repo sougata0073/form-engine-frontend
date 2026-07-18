@@ -1,9 +1,9 @@
 import {CommonResponseQuestionResponse} from './common-response-question-response';
 import {OnlyCheckboxOptionRes} from '../../question/response/checkbox-res';
+import {ResponseQuestion} from './response-question';
 
-export interface CheckboxResponseQuestionRes {
-  options: OnlyCheckboxOptionRes[],
-  responses: CheckboxResponseQuestionResResponse[]
+export interface CheckboxResponseQuestionRes extends ResponseQuestion<CheckboxResponseQuestionResResponse> {
+  options: OnlyCheckboxOptionRes[]
 }
 
 export interface CheckboxResponseQuestionResResponse extends CommonResponseQuestionResponse {

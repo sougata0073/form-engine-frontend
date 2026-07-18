@@ -1,16 +1,19 @@
-import {Component, inject, OnDestroy, OnInit, output, signal, viewChild} from '@angular/core';
+import {Component, inject, input, OnDestroy, OnInit, output, signal, viewChild} from '@angular/core';
 import {MatCard, MatCardContent} from "@angular/material/card";
 import {MatIcon} from '@angular/material/icon';
 import {MatIconButton} from '@angular/material/button';
 import {MatTooltip} from '@angular/material/tooltip';
 import {MatTabLink, MatTabNav, MatTabNavPanel} from '@angular/material/tabs';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {MatFormField} from '@angular/material/input';
 import {MatOption} from '@angular/material/core';
 import {MatSelect} from '@angular/material/select';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {EditFormResponseService} from '../../../service/edit-form-response-service';
+import {filter} from 'rxjs';
+import {EditFormResponsesSummary} from '../edit-form-responses-summary/edit-form-responses-summary';
+import {FormResponseSummary} from '../../../model/form/form-response-summary';
 
 type TabLink = 'summary' | 'question' | 'individual'
 
@@ -34,9 +37,10 @@ type TabLink = 'summary' | 'question' | 'individual'
   templateUrl: './edit-form-responses-header.html',
   styleUrl: './edit-form-responses-header.scss',
 })
-export class EditFormResponsesHeader implements OnInit, OnDestroy {
+export class EditFormResponsesHeader implements OnInit {
 
-  formId = signal<string>('')
+  formId = input.required<string>()
+  formSummary = input.required<FormResponseSummary | null>()
 
   protected tabs = signal<{ label: string, link: TabLink }[]>([])
   protected activatedLink = signal<TabLink>('summary')
@@ -45,7 +49,6 @@ export class EditFormResponsesHeader implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute)
   protected formResponseService = inject(EditFormResponseService)
 
-  protected formSummary = this.formResponseService.formResponseSummary
   protected questionSummaries = this.formResponseService.questionSummaries
 
   protected questionPaginatorPageIndex = signal<number>(0)
@@ -61,13 +64,15 @@ export class EditFormResponsesHeader implements OnInit, OnDestroy {
       {label: 'Individual', link: 'individual'}
     ])
 
-    this.activatedRoute.parent!.paramMap.subscribe(params => {
-      this.formId.set(params.get('formId')!);
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        const activatedSection = this.router.url.split(/[/?]/)
+          .find(s => this.tabs().map(t => t.link).includes(s as TabLink))
 
-      this.formResponseService.loadFormResponseSummary(this.formId(), res => {
-
-      })
-    })
+        this.activatedLink.set(activatedSection as TabLink)
+        this.onActivatedLinkChange()
+      });
 
     const activatedSection = this.router.url.split(/[/?]/)
       .find(s => this.tabs().map(t => t.link).includes(s as TabLink))
@@ -90,13 +95,12 @@ export class EditFormResponsesHeader implements OnInit, OnDestroy {
     })
   }
 
-  ngOnDestroy() {
-  }
-
   protected onTabClick(link: TabLink) {
-    this.router.navigate([link], {relativeTo: this.activatedRoute})
-    this.activatedLink.set(link)
-    this.onActivatedLinkChange()
+    if (this.activatedLink() !== link) {
+      this.router.navigate([link], {relativeTo: this.activatedRoute})
+      this.activatedLink.set(link)
+      this.onActivatedLinkChange()
+    }
   }
 
   protected handleQuestionPaginatorPageEvent(e: PageEvent) {
@@ -112,10 +116,18 @@ export class EditFormResponsesHeader implements OnInit, OnDestroy {
       case "question": {
 
         this.formResponseService.loadQuestionSummaries(this.formId(), res => {
-          const first = res.questions.at(0)
+          const responsesByQuestionQId = this.activatedRoute.snapshot.queryParams['q']
 
-          if (first) {
-            this.formGroup.controls.questionSelector.setValue(first.id)
+          if (responsesByQuestionQId) {
+            const question = res.questions.find(q => q.id === responsesByQuestionQId)
+            if (question) {
+              this.formGroup.controls.questionSelector.setValue(question.id)
+            }
+          } else {
+            const first = res.questions.at(0)
+            if (first) {
+              this.formGroup.controls.questionSelector.setValue(first.id)
+            }
           }
         })
 

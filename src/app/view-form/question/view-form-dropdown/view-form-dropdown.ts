@@ -42,11 +42,11 @@ export class ViewFormDropdown extends ViewFormQuestionComponent<DropdownRes, Onl
     })
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyDropdownResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyDropdownResponsePutReq | null {
     const id = this.formGroup.value.dropdown
 
-    return {
-      responseOptionId: id ?? null
+    return id === null || id === undefined ? null : {
+      responseOptionId: id
     }
   }
 }

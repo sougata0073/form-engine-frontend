@@ -72,12 +72,12 @@ export class ViewFormCheckbox
     })
   }
 
-  override getOnlyQuestionResponsePutReq(): OnlyCheckboxResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyCheckboxResponsePutReq | null {
     const optionIds = this.options()
       .filter(op => op.control.value)
       .map(op => op.value)
 
-    return {
+    return optionIds.length === 0 ? null : {
       responseOptionIds: optionIds
     }
   }

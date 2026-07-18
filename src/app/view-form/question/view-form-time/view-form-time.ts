@@ -30,8 +30,8 @@ export class ViewFormTime extends ViewFormQuestionComponent<TimeRes, OnlyTimeRes
     time: new FormControl<Date | null>(null)
   })
 
-  override getOnlyQuestionResponsePutReq(): OnlyTimeResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyTimeResponsePutReq | null {
     const value = this.formGroup.value.time
-    return{time: value ?? null}
+    return !value ? null : {time: value}
   }
 }

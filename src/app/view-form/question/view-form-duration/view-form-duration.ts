@@ -26,18 +26,18 @@ export class ViewFormDuration extends ViewFormQuestionComponent<DurationRes, Onl
     seconds: new FormControl<number | null>(null)
   })
 
-  override getOnlyQuestionResponsePutReq(): OnlyDurationResponsePutReq {
+  override getOnlyQuestionResponsePutReq(): OnlyDurationResponsePutReq | null {
     const values = this.formGroup.value
     const h = values.hours
     const m = values.minutes
     const s = values.seconds
 
-    const hasAnyValue = isNumber(h) || isNumber(m) || isNumber(s);
+    if (h === null && m === null && s === null) return null
 
     return {
-      hours: hasAnyValue ? h ?? 0 : null,
-      minutes: hasAnyValue ? m ?? 0 : null,
-      seconds: hasAnyValue ? s ?? 0 : null
+      hours: h ?? 0,
+      minutes: m ?? 0,
+      seconds: s ?? 0
     }
   }
 }

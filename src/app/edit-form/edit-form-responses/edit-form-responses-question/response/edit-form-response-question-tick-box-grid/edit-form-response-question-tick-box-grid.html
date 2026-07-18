@@ -1,1 +1,66 @@
-<p>edit-form-response-question-tick-box-grid works!</p>
+<div class="parent-container">
+  <mat-card appearance="raised" class="card-container">
+    <mat-card-content class="question-card-content no-padding-card">
+      <p class="question">{{ response().question ?? 'Question' }}</p>
+      <div class="option-selector-container" [class]="{'with-options': rows().length || columns().length}">
+        <table>
+          @if (columns().length) {
+            <thead>
+            <tr>
+              <th class="column-label"></th>
+
+              @for (column of columns(); track column.id) {
+                <th class="column-label">{{ column.column }}</th>
+              }
+            </tr>
+            </thead>
+          }
+          <tbody>
+            @for (row of rows(); track row.id) {
+              <tr class="row" (click)="selectRow(row)" [class.selected]="selectedRow()?.id === row.id">
+                <td class="row-label">{{ row.row }}</td>
+                @for (column of columns(); track column.id) {
+                  <td class="checkbox-cell">
+                    <mat-checkbox [value]="column.id" disabled/>
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  @for (response of responsesBySelectedRow(); track response.columnIds) {
+    <mat-card appearance="raised" class="card-container">
+      <mat-card-content class="response-card-content no-padding-card">
+        <div class="options-container">
+          @for (id of response.columnIds; track id) {
+            <div class="option">
+              <mat-checkbox [checked]="true" disabled/>
+              <p class="name">{{ getColumnFromId(id)?.column }}</p>
+            </div>
+          }
+        </div>
+        <div class="response-count">
+          <button class="square-text-button" [matMenuTriggerFor]="responseIdsMenu"
+                  matButton>{{ response.responseCount + ' responses' }}
+          </button>
+        </div>
+        <mat-menu #responseIdsMenu="matMenu" class="decorated-menu">
+          @for (id of response.responseIds; track id) {
+            <button mat-menu-item (click)="onResponseIdClick(id)">
+              <span>{{ getFormResponseSummaryFromFormResponseId(id)?.responderUserName }}</span>
+            </button>
+          }
+        </mat-menu>
+      </mat-card-content>
+    </mat-card>
+  }
+  @if (showQuestionLeftBlank()) {
+    <app-edit-form-responses-question-blank-response
+      [responseCount]="blankResponseCount()"
+      [responseSummaries]="blankResponseSummaries()"
+      (responseIdClick)="onResponseIdClick($event)"/>
+  }
+</div>
