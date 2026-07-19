@@ -37,7 +37,7 @@ export class PublishFormDialog {
   protected onPublishClick() {
     const prevForm = this.formInfo()!
 
-    this.editFormService.updateFormInfo({
+    this.editFormService.updateFormInfo(prevForm.id, {
       name: prevForm.name,
       title: prevForm.title,
       description: prevForm.description,

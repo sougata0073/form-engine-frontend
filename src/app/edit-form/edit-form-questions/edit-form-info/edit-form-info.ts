@@ -55,7 +55,7 @@ export class EditFormInfo implements OnInit, FocusableComponent {
     this.formGroup.valueChanges.subscribe(val => {
       if (this.formGroup.invalid) return
 
-      this.editFormService.updateFormInfo({
+      this.editFormService.updateFormInfo(this.formRes().id, {
         name: this.formRes().name,
         title: val.title!,
         description: val.description!,

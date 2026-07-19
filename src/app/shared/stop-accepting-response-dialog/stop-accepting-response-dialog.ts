@@ -79,7 +79,7 @@ export class StopAcceptingResponseDialog implements OnInit, OnDestroy {
     notAcceptingResponseMessage: new FormControl<string | null>(null),
     date: new FormControl<Date | null>(null, [Validators.required]),
     time: new FormControl<Date | null>(null, [Validators.required]),
-    responseLimit: new FormControl<number | null>(null, [Validators.required])
+    responseLimit: new FormControl<number | null>(null, [Validators.required, Validators.min(1), Validators.max(1000)])
   })
 
   protected selectedDateEffect = effect(() => {
@@ -139,7 +139,7 @@ export class StopAcceptingResponseDialog implements OnInit, OnDestroy {
 
     const prevForm = this.formInfo()!
 
-    this.editFormService.updateFormInfo({
+    this.editFormService.updateFormInfo(prevForm.id, {
       acceptingResponse: true,
       description: prevForm.description,
       notAcceptingResponseMessage: this.formGroup.value.notAcceptingResponseMessage ?? 'This form is no longer accepting responses.',

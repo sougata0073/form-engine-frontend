@@ -68,7 +68,6 @@ export class EditFormHeader implements OnInit {
   protected authJwtData = signal(this.authService.getJwtData())
 
   ngOnInit() {
-
     this.editFormService.loadFormInfo(this.formId(), () => {
       this.activatedRoute.queryParams.subscribe(val => {
         if (val['publishedOptions']) {
@@ -149,7 +148,7 @@ export class EditFormHeader implements OnInit {
         'Unpublish',
         () => {
           const prevForm = this.formInfo()!
-          this.editFormService.updateFormInfo({
+          this.editFormService.updateFormInfo(prevForm.id, {
             acceptingResponse: false,
             description: prevForm.description,
             notAcceptingResponseMessage: prevForm.notAcceptingResponseMessage,

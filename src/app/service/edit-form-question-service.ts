@@ -32,9 +32,9 @@ export class EditFormQuestionService {
   }
 
   updateFormInfo = debounce(
-    (form: FormAddUpdateReq, onComplete?: (res: FormInfoRes) => void) => {
+    (formId: string, form: FormAddUpdateReq, onComplete?: (res: FormInfoRes) => void) => {
 
-      const url = `http://localhost:9092/api/v1/forms/${this._formRes()?.id}`
+      const url = `http://localhost:9092/api/v1/forms/${formId}`
 
       this.http.put<FormInfoRes>(url, form).subscribe(res => {
         this._formInfo.set(res)
@@ -51,6 +51,7 @@ export class EditFormQuestionService {
 
     this.http.get<FormInfoRes>(url).subscribe(res => {
       this._formInfo.set(res)
+      onComplete(res)
     })
   }
 

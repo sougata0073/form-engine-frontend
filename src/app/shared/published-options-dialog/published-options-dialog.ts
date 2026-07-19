@@ -84,7 +84,7 @@ export class PublishedOptionsDialog implements OnInit {
     const prevForm = this.formInfo()!
     const acceptingResponse = this.formGroup.value.acceptingResponse
 
-    this.editFormService.updateFormInfo({
+    this.editFormService.updateFormInfo(prevForm.id, {
       name: prevForm.name,
       title: prevForm.title,
       description: prevForm.description,
